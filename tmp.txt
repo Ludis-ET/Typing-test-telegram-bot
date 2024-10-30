@@ -1,0 +1,141 @@
+=======================================================================================================
+
+1. Group Name: Codify
+
+Project Title: Etsy
+
+Description: Etsy is an e-commerce marketplace primarily focused on handmade, vintage, and unique items. It stands out from other e-commerce platforms because it highlights independent sellers, artisans, and small businesses who create or curate products, making it a go-to place for one-of-a-kind or customized goods.
+
+Group Members:
+1. Kidist Alemayew		ETS 0771/15.
+2. Mikiyas Mechalo		ETS 0944/15.
+3. Paul Bereket			ETS 1113/15.
+4. Philip Hailu			ETS 1118/15.
+5. Rajaf Dereje			ETS 1123/15.
+6. Rebira Oli			ETS 1128/15.
+
+=======================================================================================================
+
+2. Group Name: Free Thinkers
+
+Project Title : Free Thinkers Online Bookstore for software Engineers
+
+
+Group Members                     Id
+1. Kaleb Dagnachew            ETS0747/15
+2. Kernemi Kidane             ETS0760/15
+3. Lamrot hiwote              ETS1542/15
+4. Lidiya Abebe               ETS0832/15
+5. Nehemiah Mitiku            ETS1082/15
+6. Lydia Yonas                ETS0849/15
+
+ Features:
+1)Homepage Design: 
+   - A welcoming hero section with an image of books or a cozy reading space.
+   - A navigation bar with links to categories 
+   - Highlight featured or bestselling books with book covers and titles.  
+2)Book Listings Page:
+   - A grid layout showcasing book covers, titles, authors, and prices.
+   - Hover effects that display more details or options like "Add to Cart" or "More Info."
+3)Book Detail Page:
+   - Detailed information on a selected book, including the title, author, description, price, and availability.
+   - Space for customer reviews .
+4)Cart Page:
+   - A simple HTML-based cart showing selected books with quantity and total price.
+   - "Checkout" button for future development.
+5)Footer Section:
+   - Contact information, links to social media, and a newsletter signup.
+
+
+=======================================================================================================
+
+3. Title : Reddit Clone
+
+Group Members
+1. Mekedelawit Abadina Kassa ----------------------------- ETS0892/15
+2. Mahlet Belay Mulugeta --------------------------------- ETS0863/15
+3. Mahlet Solomon Ambaye --------------------------------- ETS0859/15
+4. Meaza Mulatu Tale  ------------------------------------ ETS0883/15
+5. Mariamawit Elias Seyum  ------------------------------- ETS0872/15
+6. Lakemihret Getachew Sahlu ----------------------------- ETS0807/15
+
+
+
+=======================================================================================================
+
+4. Title-Passport Appointment Website(Ethiopian passport services)
+
+Group Members        Id
+Meskerem Fekede      Ets0914/15
+Mery Demissie        Ets0909/15
+Mekdelawit Belay     Ets0890/15
+Nueman Mohammednur   Ets1101/15
+Meti Seboka          Ets0918/15 
+Liyuneh Rstey 	     ETS0841/15
+
+
+Description- website to facilitate passport application and renewal processes. 
+1.Users can download application forms/guides, upload requied documents and after payment get receipts in PDF format.
+2.Users can upload photo and some pictures like guidelines will appear in the website.
+3.There will be instructional videos uploaded.
+4.There will be payment/ transaction system for users to pay online.
+5.Email will be used for updates on the process.
+
+
+
+=======================================================================================================
+
+5. Project Title: Youtube Clone
+
+Group Members
+1. Leulseged Melaku             ETS0823/15
+2. Lemesa Elias                 ETS0814/15
+3. Liben Gebremedhin            ETS0825/15
+4. Rebika Woldeyesus            ETS1127/15
+5. Misgana Beselot		ETS0961/15
+6. Mihret Tesfaye		ETS0927/15
+
+
+
+=======================================================================================================
+
+6. Project Title: Airbnb
+
+Description: Airbnb is an online marketplace that connects people who want to rent out their property with people who are looking for accommodations, typically for short stays.
+
+Group Members:
+
+Kaleb Mesfin			ETS0742/15
+Kidus Efrem			ETS0773/15
+Kidus Yosef			ETS0775/15
+Leul Teferi			ETS0817/15
+Natnael Solomon			ETS1062/15
+Nebiyu Samuel			ETS1076/15
+
+
+
+=======================================================================================================
+
+7. Project Title: Hotel Management System
+
+1. Nathan Haylemaryam		ETS1041/15
+2. Nahom Hailu			ETS1003/15
+3. Mosisa Tadesse		ETS0973/15
+4. Mitiku Tadesse 		ETS0964/15
+5. Nathanim Teshome		ETS1034/15
+6. Nardos Bisrat		ETS1026/15
+
+
+=======================================================================================================
+
+Group: Felix
+Group members:
+        NAME                      ID NO.
+	1.Mesud Melaku    	 ETS0916/15
+	2.Natnael Samson  	 ETS1065/15
+	3.Natnael Kebede	 ETS1067/15
+	4.Natnael Yonas          ETS1049/15
+	5.Natnael Asfaw          ETS1071/15
+	6.Nikodimos Hunegn  	 ETS1094/15
+
+Project Title : Tinder Web App 
