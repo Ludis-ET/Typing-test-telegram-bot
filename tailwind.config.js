@@ -4,14 +4,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        "purple-light": "#f3e8ff",
-        "purple-medium": "#d1b3ff",
-        "purple-dark": "#8f61ff",
-        "purple-darker": "#6200ea",
-      },
-      gradientColorStops: {
-        "purple-start": "#f3e8ff",
-        "purple-end": "#d1b3ff",
+        "purple-darker": "#3C096C",
+        "purple-dark": "#5A189A",
+        "purple-medium": "#7B2CBF",
+        "purple-light": "#9D4EDD",
+        "purple-lightest": "#C77DFF",
+        "bg-dark": "#1B1B2F",
       },
     },
   },

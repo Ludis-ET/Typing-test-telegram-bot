@@ -15,25 +15,25 @@ const games: Game[] = [
   {
     title: "Typing Test",
     description: "Test your typing speed and accuracy!",
-    icon: <FaKeyboard className="text-purple-darker text-6xl" />,
+    icon: <FaKeyboard className="text-6xl" />,
     available: true,
   },
   {
     title: "Memory Match",
     description: "Match pairs as quickly as possible!",
-    icon: <FaPuzzlePiece className="text-purple-darker text-6xl" />,
+    icon: <FaPuzzlePiece className="text-6xl" />,
     available: false,
   },
   {
     title: "Puzzle Challenge",
     description: "Solve puzzles to train your brain.",
-    icon: <FaRocket className="text-purple-darker text-6xl" />,
+    icon: <FaRocket className="text-6xl" />,
     available: false,
   },
   {
     title: "Speed Clicker",
     description: "How fast can you click? Coming soon!",
-    icon: <FaLock className="text-purple-darker text-6xl" />,
+    icon: <FaLock className="text-6xl" />,
     available: false,
   },
 ];
@@ -56,12 +56,34 @@ export const Home = () => {
 
   return (
     <>
-      <h1 className="text-4xl font-bold mb-4 text-purple-darker">
-        LeoTYPE Games
-      </h1>
-      <p className="text-sm text-center mb-6 text-purple-dark">
+      <h1 className="text-4xl font-bold mb-4 text-white">LeoTYPE Games</h1>
+      <p className="text-sm text-center mb-6 text-gray-400">
         Discover games to test your skills! Click the arrows to explore.
       </p>
+
+      <div className="absolute inset-0 -z-10 h-full w-full overflow-hidden">
+        <div className="relative h-full w-full [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
+          {[...Array(100)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute bg-white rounded-full opacity-70"
+              style={{
+                width: `${Math.random() * 2 + 1}px`,
+                height: `${Math.random() * 2 + 1}px`,
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+              }}
+              animate={{ y: ["0%", "20%", "0%"] }}
+              transition={{
+                duration: Math.random() * 3 + 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: Math.random() * 5,
+              }}
+            />
+          ))}
+        </div>
+      </div>
 
       <div className="flex items-center justify-center w-full absolute bottom-0">
         <div className="aboslute bottom-[50vh] z-[9999]">

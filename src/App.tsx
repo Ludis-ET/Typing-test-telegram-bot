@@ -1,11 +1,14 @@
 import { Route, Routes } from "react-router-dom";
-import { Home } from "./components";
+import { Home, Game1 } from "./components";
 
 const App = () => {
   return (
-    <div className="h-screen overflow-hidden flex flex-col items-center justify-start bg-gradient-to-br from-purple-start to-purple-end text-gray-900 font-sans p-6">
+    <div className="relative h-screen overflow-hidden flex flex-col items-center justify-start font-sans text-purple-light p-6">
+      <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:#000;]"></div>
+
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="*" element={<Home />} />
+        <Route path="/game1" element={<Game1 />} />
       </Routes>
     </div>
   );
