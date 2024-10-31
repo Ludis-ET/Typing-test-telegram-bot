@@ -56,7 +56,7 @@ const App: React.FC = () => {
   const selectedGame = games[selectedIndex];
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-purple-start to-purple-end text-gray-900 font-sans p-6">
+    <div className="max-h-screen overflow-hidden flex flex-col items-center justify-start bg-gradient-to-br from-purple-start to-purple-end text-gray-900 font-sans p-6">
       <h1 className="text-4xl font-bold mb-4 text-purple-darker">
         LeoTYPE Games
       </h1>
