@@ -1,7 +1,9 @@
+import { ReactNode } from "react";
+
 export interface Game {
   title: string;
   description: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   available: boolean;
 }
 

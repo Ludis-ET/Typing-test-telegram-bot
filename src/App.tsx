@@ -1,10 +1,18 @@
 // App.tsx
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { FaKeyboard, FaLock, FaPuzzlePiece, FaRocket } from "react-icons/fa";
-import { GameCard } from "./components";
+import {
+  FaKeyboard,
+  FaLock,
+  FaPuzzlePiece,
+  FaRocket,
+  FaArrowLeft,
+  FaArrowRight,
+} from "react-icons/fa";
+import { GameCard } from "./components/GameCard"; // Adjust the import path if needed
+import { Game } from "./types/Games";
 
-const games = [
+const games: Game[] = [
   {
     title: "Typing Test",
     description: "Test your typing speed and accuracy!",
@@ -33,13 +41,16 @@ const games = [
 
 const App: React.FC = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [rotateTo, setRotateTo] = useState(false);
 
-  const handleDragEnd = (_: MouseEvent | TouchEvent, info: { offset: { x: number } }) => {
-    if (info.offset.x < -100) {
-      setSelectedIndex((prev) => (prev + 1) % games.length);
-    } else if (info.offset.x > 100) {
-      setSelectedIndex((prev) => (prev - 1 + games.length) % games.length);
-    }
+  const handleLeftClick = () => {
+    setRotateTo(false);
+    setSelectedIndex((prev) => (prev - 1 + games.length) % games.length);
+  };
+
+  const handleRightClick = () => {
+    setRotateTo(true);
+    setSelectedIndex((prev) => (prev + 1) % games.length);
   };
 
   const selectedGame = games[selectedIndex];
@@ -50,17 +61,28 @@ const App: React.FC = () => {
         LeoTYPE Games
       </h1>
       <p className="text-sm text-center mb-6 text-purple-dark">
-        Discover games to test your skills! Swipe to explore.
+        Discover games to test your skills! Click the arrows to explore.
       </p>
 
-      <div className="w-full flex items-center justify-center absolute bottom-0">
+      <div className="flex items-center justify-center w-full absolute bottom-0">
+        <div className="aboslute bottom-[50vh] z-[9999]">
+          <button
+            onClick={handleLeftClick}
+            className="text-white p-2 rounded-full hover:bg-purple-700 transition-colors duration-300"
+          >
+            <FaArrowLeft className="text-3xl" />
+          </button>
+
+          <button
+            onClick={handleRightClick}
+            className="text-white p-2 rounded-full hover:bg-purple-700 transition-colors duration-300"
+          >
+            <FaArrowRight className="text-3xl" />
+          </button>
+        </div>
         <motion.div
-          className="w-full cursor-pointer"
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          onDragEnd={handleDragEnd}
-          whileDrag={{ rotate: selectedIndex % 2 === 0 ? -15 : 15 }}
-          animate={{ rotate: 0 }}
+          className="w-full mx-4 absolute bottom-0  "
+          animate={{ rotate: rotateTo ? 360 : -360 }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
         >
           <GameCard game={selectedGame} />
