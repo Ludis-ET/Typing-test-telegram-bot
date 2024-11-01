@@ -132,12 +132,12 @@ export const Game1 = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="bg-[#33334d] p-6 md:p-8 rounded-2xl shadow-lg max-w-lg text-center">
+          <div className="bg-[#33334d] p-6 md:p-8 rounded-2xl shadow-lg max-w-lg text-center w-[90vw]">
             <h2 className="text-3xl font-bold mb-4 text-purple-300">
               Game Status
             </h2>
             <p className="text-xl mb-2">
-              Game Mode:{" "}
+              Mode:{" "}
               <span className="font-semibold text-blue-400">{gameMode}</span>
             </p>
             {roomOption === "Join Room" && (
