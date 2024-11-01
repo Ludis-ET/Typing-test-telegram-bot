@@ -2,32 +2,54 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { SinglePlayer } from "./SinglePlayer";
 
 export const Game1 = () => {
   const [gameMode, setGameMode] = useState<string | null>(null);
   const [roomOption, setRoomOption] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState<string | null>(null);
+  const [duration, setDuration] = useState<string | null>(null);
   const [roomCode, setRoomCode] = useState<string>("");
+  const [display, setDisplay] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSelect = (type: string, value: string) => {
     if (type === "mode") {
       setGameMode(value);
       setRoomOption(null);
       setDifficulty(null);
+      setDuration(null);
       setRoomCode("");
     } else if (type === "room") {
       setRoomOption(value);
       setDifficulty(null);
+      setDuration(null);
     } else if (type === "difficulty") {
       setDifficulty(value);
+    } else if (type === "duration") {
+      setDuration(value);
     }
   };
 
+  const handleSubmit = () => {
+    if (gameMode === "Single Player") {
+      setLoading(true);
+      const timer = setTimeout(() => {
+        setDisplay(1);
+        setLoading(false);
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  };
+
+  if (display === 1) {
+    return <SinglePlayer duration={duration as string} diff={difficulty as string}  />;
+  }
+
   return (
     <div className="flex flex-col items-center justify-center max-h-[80vh] bg-transparent text-white p-4">
-      <h1 className="text-4xl font-bold mb-3 text-center mt-5">
-        Choose Your Game Settings
-      </h1>
+      <h1 className="text-4xl font-bold mb-3 text-center mt-5">Game Setup</h1>
       <Link to="/">
         <FaArrowLeft className="text-3xl absolute text-white z-[9999] top-3 left-3" />
       </Link>
@@ -125,6 +147,27 @@ export const Game1 = () => {
             </motion.div>
           ))}
         </motion.div>
+      ) : !duration ? (
+        <motion.div
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-6 w-full max-w-xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {["15 sec", "30 sec", "1 min", "3 min", "5 min", "7 min"].map(
+            (time) => (
+              <motion.div
+                key={time}
+                whileHover={{ scale: 1.05 }}
+                onClick={() => handleSelect("duration", time)}
+                className="card cursor-pointer w-full h-[10vh] md:h-24 rounded-2xl flex items-center justify-center text-lg md:text-xl font-semibold shadow-lg transition-all duration-200 ease-in-out hover:shadow-2xl"
+                style={{ backgroundColor: "#6366f1" }}
+              >
+                {time}
+              </motion.div>
+            )
+          )}
+        </motion.div>
       ) : (
         <motion.div
           className="status mt-12"
@@ -148,13 +191,23 @@ export const Game1 = () => {
                 </span>
               </p>
             )}
-            <p className="text-xl">
+            <p className="text-xl mb-2">
               Difficulty:{" "}
               <span className="font-semibold text-yellow-400">
                 {difficulty}
               </span>
             </p>
-            <button className="button">{roomOption ? "Create Room" : "Start Game"}</button>
+            <p className="text-xl">
+              Duration:{" "}
+              <span className="font-semibold text-pink-400">{duration}</span>
+            </p>
+            <button className="button" onClick={handleSubmit}>
+              {loading
+                ? "Loading..."
+                : roomOption
+                ? "Create Room"
+                : "Start Game"}
+            </button>
           </div>
         </motion.div>
       )}
