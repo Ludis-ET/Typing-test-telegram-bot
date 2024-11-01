@@ -82,7 +82,7 @@ export const Game1 = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-2xl font-semibold mb-4 text-center text-teal-300">
+          <h2 className="text-2xl font-semibold mb-4 text-center text-purple-300">
             Enter Room Code
           </h2>
           <input
@@ -90,11 +90,11 @@ export const Game1 = () => {
             value={roomCode}
             onChange={(e) => setRoomCode(e.target.value)}
             placeholder="Room Code"
-            className="w-full px-4 py-2 rounded-lg text-gray-900 text-center focus:outline-none focus:ring-2 focus:ring-teal-500"
+            className="w-full px-4 py-2 rounded-lg text-gray-900 text-center focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
           <button
             onClick={() => handleSelect("difficulty", "Room Confirmed")}
-            className="mt-4 w-full py-2 rounded-md bg-teal-500 text-white hover:bg-teal-600"
+            className="mt-4 w-full py-2 rounded-md bg-purple-500 text-white hover:bg-purple-600"
           >
             Confirm Room Code
           </button>
@@ -133,7 +133,7 @@ export const Game1 = () => {
           transition={{ duration: 0.5 }}
         >
           <div className="bg-[#33334d] p-6 md:p-8 rounded-2xl shadow-lg max-w-lg text-center">
-            <h2 className="text-3xl font-bold mb-4 text-teal-300">
+            <h2 className="text-3xl font-bold mb-4 text-purple-300">
               Game Status
             </h2>
             <p className="text-xl mb-2">
