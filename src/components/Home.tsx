@@ -64,7 +64,7 @@ export const Home = () => {
       
 
       <div className="flex items-center justify-center w-full absolute bottom-0">
-        <div className="aboslute bottom-[50vh] z-[9999]">
+        <div className="aboslute bottom-[50vh] z-[99]">
           <button
             onClick={handleLeftClick}
             className="text-white p-2 rounded-full hover:bg-purple-700 transition-colors duration-300"

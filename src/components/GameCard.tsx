@@ -36,7 +36,7 @@ export const GameCard = ({ game }: GameCardProps) => {
       {isExpanded ? (
         <motion.div
           key={isExpanded ? "expanded" : "collapsed"}
-          className="flex flex-col items-center justify-center h-full"
+          className="flex flex-col items-center justify-center h-full relative z-[9999]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 2 }}
@@ -48,8 +48,8 @@ export const GameCard = ({ game }: GameCardProps) => {
       ) : (
         <>
           <h1
-            onClick={handleClick}
-            className="absolute top-[-40px] text-white hover:bg-[#63e] hover:text-white flex items-center justify-center p-2 rounded-full transition-transform duration-300 ease-in-out transform hover:scale-110"
+            onClick={game.available ? handleClick : undefined}
+            className="absolute top-[-40px] text-white hover:bg-[#63e] hover:text-white flex items-center justify-center p-2 rounded-full transition-transform duration-300 ease-in-out transform hover:scale-110 z-[999]"
           >
             {game.icon}
           </h1>
