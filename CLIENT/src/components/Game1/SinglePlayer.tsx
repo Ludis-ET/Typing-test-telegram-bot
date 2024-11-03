@@ -1,46 +1,68 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { calculateWPMAndAccuracy } from "./algorithm";
+import { calculateWPMAndAccuracy, generateRandomPrompt } from "./algorithm";
 
 export const SinglePlayer = ({
   duration,
   diff,
+  home,
 }: {
   duration: string;
   diff: string;
+  home: () => void;
 }) => {
-  const [userInput, setUserInput] = useState<string>("");
-  const [promptText] = useState<string>(
-    "The quick brown fox jumps over the lazy dog."
-  );
-  const [timeLeft, setTimeLeft] = useState<number>(
+  const durationInSeconds =
     parseInt(duration.split(" ")[0]) *
-      (duration.split(" ")[1] === "min" ? 60 : 1)
-  );
-  const [wpm, setWpm] = useState<number>(0);
-  const [accuracy, setAccuracy] = useState<string>("0/0");
-  const [isTyping, setIsTyping] = useState<boolean>(false);
+    (duration.split(" ")[1] === "min" ? 60 : 1);
+
+  const [userInput, setUserInput] = useState<string>("");
+  const [promptText, setPromptText] = useState<string>("");
+  const [timeLeft, setTimeLeft] = useState<number>(durationInSeconds);
+  const [startTime, setStartTime] = useState<number | null>(null);
   const [gameOver, setGameOver] = useState<boolean>(false);
+  const [wpm, setWPM] = useState<number | null>(null);
+  const [accuracy, setAccuracy] = useState<string | null>(null);
 
   useEffect(() => {
-    if (timeLeft > 0 && !gameOver) {
-      const timer = setInterval(() => {
+    setPromptText(generateRandomPrompt(diff, durationInSeconds));
+  }, [diff, durationInSeconds]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (timeLeft > 0 && !gameOver) {
         setTimeLeft((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    } else if (timeLeft === 0 || userInput === promptText) {
-      // Calculate WPM and accuracy when the game ends
-      const { wpm, accuracy } = calculateWPMAndAccuracy(userInput, promptText);
-      setWpm(wpm);
-      setAccuracy(accuracy);
-      setGameOver(true);
+      } else if (timeLeft <= 0) {
+        setGameOver(true);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [gameOver, timeLeft]);
+
+  useEffect(() => {
+    if (gameOver) {
+      const endTime = Date.now();
+      const timeTaken = startTime ? (endTime - startTime) / 1000 : 0;
+      const { wpm: calculatedWPM, accuracy: calculatedAccuracy } =
+        calculateWPMAndAccuracy(userInput, promptText, timeTaken);
+
+      setWPM(calculatedWPM);
+      setAccuracy(calculatedAccuracy);
     }
-  }, [timeLeft, userInput, promptText, gameOver]);
+  }, [gameOver, userInput, promptText, startTime]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (gameOver) return;
     const value = e.target.value;
+
+    if (!startTime) {
+      setStartTime(Date.now());
+    }
+
     setUserInput(value);
-    if (!isTyping) setIsTyping(true);
+    if (value.length >= promptText.length) {
+      setGameOver(true);
+    }
   };
 
   const renderTextWithColors = () => {
@@ -74,28 +96,49 @@ export const SinglePlayer = ({
     );
   };
 
+  const handlePlayAgain = () => {
+    setGameOver(false);
+    setUserInput("");
+    setTimeLeft(durationInSeconds);
+    setStartTime(null);
+    setPromptText(generateRandomPrompt(diff, durationInSeconds));
+    setWPM(null);
+    setAccuracy(null);
+  };
+
+  if (gameOver) {
+    return (
+      <div className="flex flex-col items-center justify-center p-6 max-w-[90vw] mx-auto bg-gradient-to-r from-red-500 to-red-700 rounded-lg shadow-2xl text-white">
+        <h2 className="text-3xl font-extrabold mb-4 text-center tracking-wider">
+          Game Over
+        </h2>
+        {wpm !== null && accuracy !== null && (
+          <>
+            <p className="text-lg mb-2">Your Results:</p>
+            <p className="text-lg">WPM: {wpm.toFixed(2)}</p>
+            <p className="text-lg">Accuracy: {accuracy}</p>
+          </>
+        )}
+        <button onClick={handlePlayAgain} className="button">
+          Play Again
+        </button>
+        <button onClick={home} className="button">
+          Home
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center p-6 max-w-[90vw] mx-auto bg-gradient-to-br from-indigo-600 to-purple-700 rounded-lg shadow-2xl text-white">
+    <div className="flex flex-col items-center justify-center p-6 max-w-[90vw] mx-auto bg-transparent rounded-lg shadow-2xl text-white">
       <h2 className="text-3xl font-extrabold mb-4 text-center tracking-wider">
-        Typing Mastery - {diff} Mode
+        Good Luck
       </h2>
       <div className="mb-6 text-lg tracking-wide font-medium">
         Time Left: <span className="text-yellow-300">{timeLeft} sec</span>
       </div>
-      <div className="mb-6 text-lg tracking-wide font-medium">
-        WPM:{" "}
-        <span className="text-yellow-300">
-          {isTyping && !gameOver ? wpm : 0}
-        </span>
-      </div>
-      <div className="mb-6 text-lg tracking-wide font-medium">
-        Accuracy:{" "}
-        <span className="text-yellow-300">
-          {isTyping && !gameOver ? accuracy : "0/0"}
-        </span>
-      </div>
 
-      <div className="bg-gray-900 w-full p-4 rounded-md outline-none">
+      <div className="bg-gray-900 w-[90vw] p-4 rounded-md outline-none max-h-[100vh] overflow-scroll">
         {renderTextWithColors()}
         <input
           type="text"
@@ -109,11 +152,6 @@ export const SinglePlayer = ({
           className="opacity-0"
         />
       </div>
-      {gameOver && (
-        <div className="mt-4 text-red-300">
-          Game Over! Your WPM: {wpm}, Accuracy: {accuracy}
-        </div>
-      )}
     </div>
   );
 };

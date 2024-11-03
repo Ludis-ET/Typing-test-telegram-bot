@@ -42,9 +42,22 @@ export const Game1 = () => {
       return () => clearTimeout(timer);
     }
   };
+  const goHome = () => {
+    setGameMode(null);
+    setRoomOption(null);
+    setDifficulty(null);
+    setDuration(null);
+    setDisplay(0);
+  };
 
   if (display === 1) {
-    return <SinglePlayer duration={duration as string} diff={difficulty as string}  />;
+    return (
+      <SinglePlayer
+        duration={duration as string}
+        diff={difficulty as string}
+        home={goHome}
+      />
+    );
   }
 
   return (
