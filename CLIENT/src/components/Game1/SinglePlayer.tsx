@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { calculateWPMAndAccuracy, generateRandomPrompt } from "./algorithm";
+import {
+  calculateWPMAndAccuracy,
+  generateRandomPrompt,
+} from "./algorithm";
 
 export const SinglePlayer = ({
   duration,
@@ -22,6 +25,8 @@ export const SinglePlayer = ({
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [wpm, setWPM] = useState<number | null>(null);
   const [accuracy, setAccuracy] = useState<string | null>(null);
+
+  const textContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setPromptText(generateRandomPrompt(diff, durationInSeconds));
@@ -50,6 +55,18 @@ export const SinglePlayer = ({
       setAccuracy(calculatedAccuracy);
     }
   }, [gameOver, userInput, promptText, startTime]);
+
+  useEffect(() => {
+    if (textContainerRef.current) {
+      const inputIndex = userInput.length;
+
+      const scrollToIndex = Math.max(0, inputIndex - 10);
+      const targetElement = textContainerRef.current.children[scrollToIndex];
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+  }, [userInput, promptText]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (gameOver) return;
@@ -138,8 +155,10 @@ export const SinglePlayer = ({
         Time Left: <span className="text-yellow-300">{timeLeft} sec</span>
       </div>
 
-      <div className="bg-gray-900 w-[90vw] p-4 rounded-md outline-none max-h-[100vh] overflow-scroll">
-        {renderTextWithColors()}
+      <div
+        ref={textContainerRef}
+        className="bg-gray-900 w-[90vw] p-4 rounded-md outline-none max-h-[60vh] overflow-y-scroll"
+      >
         <input
           type="text"
           id="input"
@@ -149,8 +168,9 @@ export const SinglePlayer = ({
           autoFocus
           autoComplete="off"
           autoCapitalize="off"
-          className="opacity-0"
+          className="opacity-0 absolute"
         />
+        {renderTextWithColors()}
       </div>
     </div>
   );
