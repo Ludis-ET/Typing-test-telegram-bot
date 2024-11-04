@@ -1,8 +1,22 @@
 import { Route, Routes } from "react-router-dom";
 import { Home, Game1 } from "./components";
 import { motion } from "framer-motion";
+import { connect, getConnectedAddress } from "@joyid/evm";
+import { useEffect, useState } from "react";
 
 const App = () => {
+  const [address, setAddress] = useState(getConnectedAddress());
+  useEffect(() => {
+    const onConnect = async () => {
+      try {
+        const res = await connect();
+        setAddress(res);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    onConnect();
+  }, []);
   return (
     <div className="relative h-screen overflow-hidden flex flex-col items-center justify-start font-sans text-purple-light p-6">
       <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:#000;]"></div>
