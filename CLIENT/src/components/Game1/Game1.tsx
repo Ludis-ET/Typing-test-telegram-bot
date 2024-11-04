@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { SinglePlayer } from "./SinglePlayer";
+import { SinglePlayer } from "./single/SinglePlayer";
 import { Diff, Duration, Mode } from "./Select";
 
 export const Game1 = () => {
@@ -30,7 +30,6 @@ export const Game1 = () => {
     setDuration("1 min");
     setDisplay(0);
   };
-
 
   if (display === 1) {
     return (
@@ -85,7 +84,7 @@ export const Game1 = () => {
               Join
             </button>
             <button className="button mb-2" onClick={() => setMulti("create")}>
-              New 
+              New
             </button>
           </>
         )}
