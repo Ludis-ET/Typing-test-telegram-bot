@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import {
-  calculateWPMAndAccuracy,
-  generateRandomPrompt,
-} from "./algorithm";
+import { generateRandomPrompt } from "./GenerateP";
+import { calculateWPMAndAccuracy } from "./CalculateWPM";
 
 export const SinglePlayer = ({
   duration,
@@ -24,7 +22,7 @@ export const SinglePlayer = ({
   const [startTime, setStartTime] = useState<number | null>(null);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [wpm, setWPM] = useState<number | null>(null);
-  const [accuracy, setAccuracy] = useState<string | null>(null);
+  const [accuracy, setAccuracy] = useState<number | null>(null);
 
   const textContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -47,11 +45,13 @@ export const SinglePlayer = ({
   useEffect(() => {
     if (gameOver) {
       const endTime = Date.now();
-      const timeTaken = startTime ? (endTime - startTime) / 1000 : 0;
-      const { wpm: calculatedWPM, accuracy: calculatedAccuracy } =
-        calculateWPMAndAccuracy(userInput, promptText, timeTaken);
+      const timeTakenMinutes = startTime ? (endTime - startTime) / 60000 : 0;
+      const {
+                netWPM,
+        accuracy: calculatedAccuracy,
+      } = calculateWPMAndAccuracy(promptText, userInput, timeTakenMinutes);
 
-      setWPM(calculatedWPM);
+      setWPM(netWPM);
       setAccuracy(calculatedAccuracy);
     }
   }, [gameOver, userInput, promptText, startTime]);
@@ -59,7 +59,6 @@ export const SinglePlayer = ({
   useEffect(() => {
     if (textContainerRef.current) {
       const inputIndex = userInput.length;
-
       const scrollToIndex = Math.max(0, inputIndex - 10);
       const targetElement = textContainerRef.current.children[scrollToIndex];
       if (targetElement) {
@@ -133,7 +132,7 @@ export const SinglePlayer = ({
           <>
             <p className="text-lg mb-2">Your Results:</p>
             <p className="text-lg">WPM: {wpm.toFixed(2)}</p>
-            <p className="text-lg">Accuracy: {accuracy}</p>
+            <p className="text-lg">Accuracy: {accuracy.toFixed(2)}%</p>
           </>
         )}
         <button onClick={handlePlayAgain} className="button">
