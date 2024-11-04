@@ -1,28 +1,12 @@
 import { Route, Routes } from "react-router-dom";
 import { Home, Game1 } from "./components";
 import { motion } from "framer-motion";
-import { connect, getConnectedAddress } from "@joyid/evm";
-import { useState } from "react";
 
 const App = () => {
-  const [address, setAddress] = useState(getConnectedAddress());
-    const onConnect = async () => {
-      try {
-        const res = await connect();
-        setAddress(res);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-  console.log(address)
   return (
     <div className="relative h-screen overflow-hidden flex flex-col items-center justify-start font-sans text-purple-light p-6">
       <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:#000;]"></div>
       <div className="absolute inset-0 -z-10 h-full w-full overflow-hidden">
-        <button className="btn btn-primary" onClick={onConnect}>
-          Connect JoyID
-        </button>
-        {address}
         <div className="relative h-full w-full [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
           {[...Array(100)].map((_, i) => (
             <motion.div
