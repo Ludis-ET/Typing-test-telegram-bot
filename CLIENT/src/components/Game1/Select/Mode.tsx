@@ -1,12 +1,23 @@
 import { useState } from "react";
 import "./css/Mode.css";
 
-export const Mode = () => {
-  const [isChecked, setIsChecked] = useState(false);
+export const Mode = ({
+  room,
+  setroom,
+}: {
+  room: string | null;
+  setroom: (newRoom: string | null) => void;
+}) => {
+  const [isChecked, setIsChecked] = useState(room === "multi");
 
   const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChecked(event.target.checked);
-    console.log("Toggle State:", event.target.checked);
+    const newChecked = event.target.checked;
+    setIsChecked(newChecked);
+    if (!newChecked) {
+      setroom("single");
+    } else {
+      setroom("multi");
+    }
   };
 
   return (

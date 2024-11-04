@@ -1,18 +1,21 @@
-import React, { useState } from "react";
 import { motion } from "framer-motion";
 
 const difficultyOptions = [
-  { label: "Easy", icon: "🌼" }, // You can replace with actual icons
+  { label: "Easy", icon: "🌼" },
   { label: "Medium", icon: "🌱" },
   { label: "Hard", icon: "🌿" },
   { label: "Nightmare", icon: "🔥" },
 ];
 
-export const Diff: React.FC = () => {
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>("");
-
+export const Diff = ({
+  diff,
+  setdiff,
+}: {
+  diff: string | null;
+  setdiff: (newDiff: string | null) => void;
+}) => {
   const handleDifficultySelect = (label: string) => {
-    setSelectedDifficulty(label);
+    setdiff(label.toLowerCase());
   };
 
   return (
@@ -22,9 +25,7 @@ export const Diff: React.FC = () => {
           <motion.div
             key={option.label}
             className={`flex items-center p-2 border rounded-lg cursor-pointer transition-transform transform hover:scale-105 ${
-              selectedDifficulty === option.label
-                ? "border-blue-500"
-                : "border-gray-300"
+              diff === option.label.toLowerCase() ? "border-blue-500" : "border-gray-300"
             }`}
             onClick={() => handleDifficultySelect(option.label)}
             initial={{ opacity: 0, y: 20 }}
