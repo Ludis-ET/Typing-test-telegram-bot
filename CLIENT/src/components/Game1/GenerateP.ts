@@ -44,6 +44,13 @@ const wordFreq = [
   "performance",
   "invention",
   "sequence",
+  "transcend",
+  "ambiguous",
+  "inevitable",
+  "complexity",
+  "peripheral",
+  "abstract",
+  "hypothetical",
 ];
 
 const nltkWords = [
@@ -58,8 +65,15 @@ const nltkWords = [
   "paradox",
   "synergy",
   "cognizance",
+  "ephemeral",
+  "juxtaposition",
+  "euphemism",
+  "anachronistic",
+  "pulchritude",
+  "idiosyncratic",
 ];
 
+const smallSymbols = ["=", ",", ".", "-"];
 const symbols = [
   "!",
   "@",
@@ -71,9 +85,7 @@ const symbols = [
   "*",
   "(",
   ")",
-  "-",
   "_",
-  "=",
   "+",
   "[",
   "]",
@@ -85,11 +97,10 @@ const symbols = [
   '"',
   "<",
   ">",
-  ",",
-  ".",
   "?",
   "/",
 ];
+const numbers = Array.from({ length: 10 }, (_, i) => i.toString());
 
 const averageWPM = 40;
 
@@ -137,36 +148,50 @@ function generateEasyPrompt(totalCharacters: number): string {
 function generateMediumPrompt(totalCharacters: number): string {
   const commonCount = Math.floor(totalCharacters / 10);
   const freqCount = Math.ceil(totalCharacters / 10);
+
   const common = getRandomWords(commonWords, commonCount);
   const freq = getRandomWords(wordFreq, freqCount);
+
   return [...common, ...freq].sort(() => Math.random() - 0.5).join(" ");
 }
 
 function generateHardPrompt(totalCharacters: number): string {
-  const freqCount = Math.floor(totalCharacters / 6);
+  const freqCount = Math.floor(totalCharacters / 8);
   const nltkCount = Math.ceil(totalCharacters / 12);
+  const symbolCount = Math.ceil(totalCharacters / 15);
+  const numberCount = Math.ceil(totalCharacters / 20);
+
   const freq = getRandomWords(wordFreq, freqCount);
   const nltk = getRandomWords(nltkWords, nltkCount);
-  return [...freq, ...nltk].sort(() => Math.random() - 0.5).join(" ");
+  const symbolsList = getRandomSymbols(smallSymbols, symbolCount);
+  const numbersList = getRandomSymbols(numbers, numberCount);
+
+  return [...freq, ...nltk, ...symbolsList, ...numbersList]
+    .sort(() => Math.random() - 0.5)
+    .join(" ");
 }
 
 function generateNightmarePrompt(totalCharacters: number): string {
-  const nltkCount = Math.floor(totalCharacters / 8);
-  const symbolCount = Math.ceil(totalCharacters / 12);
+  const nltkCount = Math.floor(totalCharacters / 6);
+  const symbolCount = Math.ceil(totalCharacters / 8);
+  const numberCount = Math.ceil(totalCharacters / 10);
+
   const nltk = getRandomWords(nltkWords, nltkCount);
-  const randomSymbols = getRandomSymbols(symbolCount);
-  return [...nltk, ...randomSymbols].sort(() => Math.random() - 0.5).join(" ");
+  const allSymbols = getRandomSymbols(symbols, symbolCount);
+  const numbersList = getRandomSymbols(numbers, numberCount);
+
+  return [...nltk, ...allSymbols, ...numbersList]
+    .sort(() => Math.random() - 0.5)
+    .join(" ");
 }
 
 function getRandomWords(wordArray: string[], count: number): string[] {
   return wordArray.sort(() => Math.random() - 0.5).slice(0, count);
 }
 
-function getRandomSymbols(count: number): string[] {
+function getRandomSymbols(symbolArray: string[], count: number): string[] {
   return Array.from(
     { length: count },
-    () => symbols[Math.floor(Math.random() * symbols.length)]
+    () => symbolArray[Math.floor(Math.random() * symbolArray.length)]
   );
 }
-
-

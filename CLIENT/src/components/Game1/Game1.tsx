@@ -145,7 +145,7 @@ export const Game1 = () => {
             <motion.div
               key={level}
               whileHover={{ scale: 1.05 }}
-              onClick={() => handleSelect("difficulty", level)}
+              onClick={() => handleSelect("difficulty", level.toLowerCase())}
               className="card cursor-pointer w-full h-[15vh] md:h-40 rounded-2xl flex items-center justify-center text-lg md:text-xl font-semibold shadow-lg transition-all duration-200 ease-in-out hover:shadow-2xl"
               style={{
                 backgroundColor:
