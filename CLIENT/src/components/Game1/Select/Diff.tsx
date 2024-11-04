@@ -11,8 +11,8 @@ export const Diff = ({
   diff,
   setdiff,
 }: {
-  diff: string | null;
-  setdiff: (newDiff: string | null) => void;
+  diff: string;
+  setdiff: (newDiff: string) => void;
 }) => {
   const handleDifficultySelect = (label: string) => {
     setdiff(label.toLowerCase());

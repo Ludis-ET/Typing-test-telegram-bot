@@ -5,8 +5,8 @@ export const Mode = ({
   room,
   setroom,
 }: {
-  room: string | null;
-  setroom: (newRoom: string | null) => void;
+  room: string;
+  setroom: (newRoom: string) => void;
 }) => {
   const [isChecked, setIsChecked] = useState(room === "multi");
 

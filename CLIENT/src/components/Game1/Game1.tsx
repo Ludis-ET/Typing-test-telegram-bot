@@ -6,9 +6,9 @@ import { SinglePlayer } from "./SinglePlayer";
 import { Diff, Duration, Mode } from "./Select";
 
 export const Game1 = () => {
-  const [roomOption, setRoomOption] = useState<string | null>("single");
-  const [difficulty, setDifficulty] = useState<string | null>("easy");
-  const [duration, setDuration] = useState<string | null>("1 min");
+  const [roomOption, setRoomOption] = useState<string>("single");
+  const [difficulty, setDifficulty] = useState<string>("easy");
+  const [duration, setDuration] = useState<string>("1 min");
   const [multi, setMulti] = useState("");
   const [roomCode, setRoomCode] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -25,9 +25,9 @@ export const Game1 = () => {
   };
 
   const goHome = () => {
-    setRoomOption(null);
-    setDifficulty(null);
-    setDuration(null);
+    setRoomOption("single");
+    setDifficulty("easy");
+    setDuration("1 min");
     setDisplay(0);
   };
 

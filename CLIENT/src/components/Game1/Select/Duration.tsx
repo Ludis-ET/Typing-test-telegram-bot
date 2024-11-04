@@ -5,7 +5,7 @@ export const Duration = ({
   setdur,
 }: {
   dur: string;
-  setdur: (dur: string | null) => void;
+  setdur: (dur: string) => void;
 }) => {
   const durations = [15, 30, 60, 180, 300];
 
