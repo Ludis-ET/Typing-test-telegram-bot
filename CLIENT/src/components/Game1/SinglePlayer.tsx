@@ -27,7 +27,6 @@ export const SinglePlayer = ({
   const textContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // Generate a random prompt based on difficulty and duration
     setPromptText(generateRandomPrompt(diff, durationInSeconds));
   }, [diff, durationInSeconds]);
 

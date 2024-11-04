@@ -109,10 +109,10 @@ export function generateRandomPrompt(
   durationInSeconds: number
 ): string {
   const totalCharacters = calculateTotalCharacters(durationInSeconds);
-  const paragraphs = Array(6)
+  const paragraphs = Array(10)
     .fill("")
     .map(() => generateParagraphByDifficulty(difficulty, totalCharacters))
-    .join("\n\n");
+    .join(" ");
 
   return paragraphs;
 }
