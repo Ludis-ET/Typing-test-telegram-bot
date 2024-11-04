@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { SinglePlayer } from "./SinglePlayer";
-import { Mode } from "./Select";
+import { Diff, Mode } from "./Select";
 
 export const Game1 = () => {
   const [gameMode, setGameMode] = useState<string | null>(null);
@@ -70,14 +70,14 @@ export const Game1 = () => {
       <Link to="/">
         <FaArrowLeft className="text-3xl absolute text-white z-[9999] top-3 left-3" />
       </Link>
-      <div>
+      <div className="flex w-full gap-8 my-3">
         <div className="flex flex-col gap-8 items-center justify-center">
-          <p className="text-xl font-bold">Single Player</p>
+          <p className="text-xl font-bold text-center">Single Player</p>
           <Mode />
-          <p className="text-xl font-bold">Multiplayer</p>
+          <p className="text-xl font-bold text-center">Multiplayer</p>
         </div>
         <div>
-          
+          <Diff />
         </div>
       </div>
       {duration && (
