@@ -4,6 +4,9 @@ import { calculateWPMAndAccuracy } from "../CalculateWPM";
 import { PromptDisplay } from "./PromptDisplay";
 import { UserInput } from "./UserInput";
 import { ResultsDisplay } from "./ResultsDisplay";
+import { Link } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
+import { BiRefresh } from "react-icons/bi";
 
 export const SinglePlayer = ({
   duration,
@@ -79,9 +82,13 @@ export const SinglePlayer = ({
 
   return (
     <div className="flex flex-col items-center justify-center p-6 max-w-[90vw] mx-auto bg-transparent rounded-lg shadow-2xl text-white">
-      <h2 className="text-3xl font-extrabold mb-4 text-center tracking-wider">
-        Good Luck
+      <h2 className="text-3xl font-extrabold mb-4 text-center tracking-wider flex gap-4">
+        Good Luck{" "}
+        <BiRefresh className="cursor-pointer" onClick={handlePlayAgain} />
       </h2>
+      <Link to="/">
+        <FaArrowLeft className="text-3xl absolute text-white z-[9999] top-3 left-3" />
+      </Link>
       <div className="mb-6 text-lg tracking-wide font-medium">
         Time Left: <span className="text-yellow-300">{timeLeft} sec</span>
       </div>

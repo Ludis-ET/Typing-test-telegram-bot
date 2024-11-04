@@ -10,7 +10,7 @@ export const Game1 = () => {
   const [difficulty, setDifficulty] = useState<string>("easy");
   const [duration, setDuration] = useState<string>("1 min");
   const [multi, setMulti] = useState("");
-  const [roomCode, setRoomCode] = useState<string>("");
+  // const [roomCode, setRoomCode] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [display, setDisplay] = useState<number>(0);
 
