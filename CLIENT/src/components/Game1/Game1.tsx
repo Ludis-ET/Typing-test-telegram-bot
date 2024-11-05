@@ -14,6 +14,11 @@ export const Game1 = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [display, setDisplay] = useState<number>(0);
 
+
+const telegramData = window.Telegram.WebApp.initDataUnsafe;
+const userPhoneNumber = telegramData?.user?.phone_number;
+
+
   const handleSubmit = () => {
     setLoading(true);
     const timer = setTimeout(() => {
@@ -43,6 +48,7 @@ export const Game1 = () => {
 
   return (
     <div className="flex flex-col items-center justify-center max-h-screen text-white p-4">
+      <h1 className="text-center text-3xl">{userPhoneNumber} ll</h1>
       <Link to="/">
         <FaArrowLeft className="text-3xl absolute text-white z-[9999] top-3 left-3" />
       </Link>

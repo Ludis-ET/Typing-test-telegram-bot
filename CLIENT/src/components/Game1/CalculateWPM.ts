@@ -4,11 +4,8 @@ export function calculateWPMAndAccuracy(
   timeTaken: number,
   difficulty: string
 ): { wpm: number; accuracy: string } {
-  const totalChars = promptText.length;
   const typedChars = userInput.length;
   const correctChars = getCorrectCharsCount(userInput, promptText);
-  const missedChars = totalChars - correctChars;
-  const extraChars = Math.max(0, typedChars - totalChars);
 
   let charsPerWord = 5;
   let difficultyMultiplier = 1;
@@ -29,10 +26,9 @@ export function calculateWPMAndAccuracy(
 
   const wpm =
     (correctChars / charsPerWord / (timeTaken / 60)) * difficultyMultiplier;
-  const totalCountedChars = typedChars + missedChars + extraChars;
   const accuracy =
-    totalCountedChars > 0
-      ? ((correctChars / totalCountedChars) * 100).toFixed(2) + "%"
+    typedChars > 0
+      ? ((correctChars / typedChars) * 100).toFixed(2) + "%"
       : "0.00%";
 
   return {
