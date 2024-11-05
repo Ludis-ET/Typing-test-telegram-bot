@@ -42,9 +42,11 @@ bot.onText(/\/start/, (msg: Message) => {
         [
           {
             text: "Start Game",
-            url: `https://bot-two-livid.vercel.app/?userId=${
-              msg.from?.id
-            }&userName=${encodeURIComponent(userName)}`,
+            web_app: {
+              url: `https://bot-two-livid.vercel.app/?userId=${
+                msg.from?.id
+              }&userName=${encodeURIComponent(userName)}`,
+            },
           },
         ],
       ],

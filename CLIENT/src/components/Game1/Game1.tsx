@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { SinglePlayer } from "./single/SinglePlayer";
 import { Diff, Duration, Mode } from "./Select";
-import queryString from "query-string";
 
 export const Game1 = () => {
   const [roomOption, setRoomOption] = useState<string>("single");
@@ -13,18 +12,9 @@ export const Game1 = () => {
   const [multi, setMulti] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const [display, setDisplay] = useState<number>(0);
-  const [user, setUser] = useState({
-    id: "",
-    username: "",
-  });
+  
 
-  useEffect(() => {
-    const { userId, userName } = queryString.parse(window.location.search);
-    setUser({
-      id: userId as string,
-      username: userName as string,
-    });
-  }, []);
+  
 
   const handleSubmit = () => {
     setLoading(true);
@@ -55,7 +45,6 @@ export const Game1 = () => {
 
   return (
     <div className="flex flex-col items-center justify-center max-h-screen text-white p-4">
-      {user.id} {user.username}
       <Link to="/">
         <FaArrowLeft className="text-3xl absolute text-white z-[9999] top-3 left-3" />
       </Link>

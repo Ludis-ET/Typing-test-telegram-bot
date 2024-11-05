@@ -1,8 +1,21 @@
 import { Route, Routes } from "react-router-dom";
 import { Home, Game1 } from "./components";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import queryString from "query-string";
 
 const App = () => {
+  const [user, setUser] = useState({
+    id: "",
+    username: "",
+  });
+  useEffect(() => {
+    const { userId, userName } = queryString.parse(window.location.search);
+    setUser({
+      id: userId as string,
+      username: userName as string,
+    });
+  }, []);
 
   return (
     <div className="relative h-screen overflow-hidden flex flex-col items-center justify-start font-sans text-purple-light p-6">
@@ -30,6 +43,10 @@ const App = () => {
           ))}
         </div>
       </div>
+      <h1 className="text-4xl">
+        Ludis{user.id}
+        {user.username}
+      </h1>
       <Routes>
         <Route path="*" element={<Home />} />
         <Route path="/game1" element={<Game1 />} />
