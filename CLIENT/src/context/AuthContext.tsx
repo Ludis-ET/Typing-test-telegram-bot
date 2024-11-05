@@ -3,17 +3,9 @@ import {
   getUserFromFirestore,
   addUserToFirestore,
 } from "../utils/firestoreService";
+import { AuthContextType, User } from "../types/Context";
 
-interface User {
-  id: string;
-  username: string;
-}
 
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  setUser: (user: User) => void;
-}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

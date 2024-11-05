@@ -1,7 +1,6 @@
 import express from "express";
 import TelegramBot, { Message } from "node-telegram-bot-api";
 import dotenv from "dotenv";
-import axios from "axios";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,10 +22,12 @@ const welcomeImageUrl =
 
 bot.onText(/\/start/, (msg: Message) => {
   const chatId = msg.chat.id;
-  const userName = msg.from?.first_name || "User";
+  const first = msg.from?.first_name || "User";
+  const username = msg.from?.username || "username";
+  const id = msg.from?.id;
 
   const welcomeMessage = `
-    Welcome, ${userName}! 🎉
+    Welcome, ${first}! 🎉
     
     Get ready to test your typing skills with our exciting game! 🕹️
     - **Game Objective:** Type the given text as fast and accurately as possible.
@@ -43,9 +44,9 @@ bot.onText(/\/start/, (msg: Message) => {
           {
             text: "Start Game",
             web_app: {
-              url: `https://bot-two-livid.vercel.app/?userId=${
-                msg.from?.id
-              }&userName=${encodeURIComponent(userName)}`,
+              url: `https://bot-two-livid.vercel.app/?userId=${id}&userName=${encodeURIComponent(
+                username
+              )}`,
             },
           },
         ],
