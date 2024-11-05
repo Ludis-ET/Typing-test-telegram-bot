@@ -10,13 +10,8 @@ export const Game1 = () => {
   const [difficulty, setDifficulty] = useState<string>("easy");
   const [duration, setDuration] = useState<string>("1 min");
   const [multi, setMulti] = useState("");
-  // const [roomCode, setRoomCode] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [display, setDisplay] = useState<number>(0);
-
-
-const telegramData = window.Telegram.WebApp.initDataUnsafe;
-const userPhoneNumber = telegramData?.user?.phone_number;
 
 
   const handleSubmit = () => {
@@ -48,7 +43,7 @@ const userPhoneNumber = telegramData?.user?.phone_number;
 
   return (
     <div className="flex flex-col items-center justify-center max-h-screen text-white p-4">
-      <h1 className="text-center text-3xl">{userPhoneNumber} ll</h1>
+   
       <Link to="/">
         <FaArrowLeft className="text-3xl absolute text-white z-[9999] top-3 left-3" />
       </Link>
@@ -79,7 +74,7 @@ const userPhoneNumber = telegramData?.user?.phone_number;
             placeholder="xyz1234"
           />
           <button className="bg-white text-black font-medium rounded-r-full flex items-center justify-center w-24 h-full relative transition-all duration-300 hover:bg-gray-300">
-            join
+            Join
           </button>
         </div>
       )}
