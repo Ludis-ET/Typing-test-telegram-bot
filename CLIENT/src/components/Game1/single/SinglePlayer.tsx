@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { generateRandomPrompt } from "../GenerateP";
-import { calculateWPMAndAccuracy } from "../CalculateWPM";
+import { generateRandomPrompt } from "../../../utils/GenerateP";
+import { calculateWPMAndAccuracy } from "../../../utils/CalculateWPM";
 import { PromptDisplay } from "./PromptDisplay";
 import { UserInput } from "./UserInput";
 import { ResultsDisplay } from "./ResultsDisplay";
