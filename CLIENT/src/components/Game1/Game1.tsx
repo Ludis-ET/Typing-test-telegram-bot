@@ -21,6 +21,12 @@ export const Game1 = () => {
     }
   }, []);
 
+  const handleLogin = () => {
+    // Redirect the user to the Telegram login page
+    const telegramLoginUrl = `https://telegram.me/leotypebot?start=login`;
+    window.open(telegramLoginUrl, "_self"); // or "_blank" for a new tab
+  };
+
   const handleSubmit = () => {
     setLoading(true);
     const timer = setTimeout(() => {
@@ -103,6 +109,11 @@ export const Game1 = () => {
           </>
         )}
       </div>
+
+      {/* Telegram Login Button */}
+      <button onClick={handleLogin} className="button mb-4">
+        Log in with Telegram
+      </button>
 
       {loading && (
         <motion.div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black opacity-75 z-50">
