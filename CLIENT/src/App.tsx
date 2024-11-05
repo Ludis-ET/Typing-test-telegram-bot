@@ -1,8 +1,19 @@
 import { Route, Routes } from "react-router-dom";
 import { Home, Game1 } from "./components";
 import { motion } from "framer-motion";
+import queryString from "query-string";
+import { useEffect } from "react";
 
 const App = () => {
+  useEffect(() => {
+    const { userId, userName } = queryString.parse(window.location.search);
+
+    if (userId && userName) {
+      localStorage.setItem("userId", userId as string);
+      localStorage.setItem("userName", userName as string);
+    }
+  }, []);
+
   return (
     <div className="relative h-screen overflow-hidden flex flex-col items-center justify-start font-sans text-purple-light p-6">
       <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:#000;]"></div>

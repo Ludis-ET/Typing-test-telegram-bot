@@ -1,11 +1,8 @@
+import { createContext, ReactNode, useEffect, useState } from "react";
 import {
-  createContext,
-  ReactNode,
-  useEffect,
-  useState,
-} from "react";
-import queryString from "query-string";
-import { getUserFromFirestore, addUserToFirestore } from "../utils/firestoreService";
+  getUserFromFirestore,
+  addUserToFirestore,
+} from "../utils/firestoreService";
 
 interface User {
   id: string;
@@ -25,15 +22,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { userId, userName } = queryString.parse(window.location.search);
+      const userId = localStorage.getItem("userId");
+      const userName = localStorage.getItem("userName");
 
       if (userId && userName) {
-        const existingUser = await getUserFromFirestore(userId as string);
+        const existingUser = await getUserFromFirestore(userId);
         if (existingUser) {
           setUser(existingUser as User);
         } else {
-          await addUserToFirestore(userId as string, userName as string);
-          setUser({ id: userId as string, username: userName as string });
+          await addUserToFirestore(userId, userName);
+          setUser({ id: userId, username: userName });
         }
       }
     };
