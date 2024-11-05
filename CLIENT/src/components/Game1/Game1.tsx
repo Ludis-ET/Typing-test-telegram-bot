@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -12,7 +12,14 @@ export const Game1 = () => {
   const [multi, setMulti] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const [display, setDisplay] = useState<number>(0);
+  const [currentUser, setCurrentUser] = useState(null);
 
+  useEffect(() => {
+    const userData = window.localStorage.getItem("telegramUser");
+    if (userData) {
+      setCurrentUser(JSON.parse(userData));
+    }
+  }, []);
 
   const handleSubmit = () => {
     setLoading(true);
@@ -43,7 +50,13 @@ export const Game1 = () => {
 
   return (
     <div className="flex flex-col items-center justify-center max-h-screen text-white p-4">
-   
+      {currentUser ? (
+        <h1 className="text-center text-3xl">
+          Logged in as {currentUser}
+        </h1>
+      ) : (
+        <h1 className="text-center text-3xl">Not logged in</h1>
+      )}
       <Link to="/">
         <FaArrowLeft className="text-3xl absolute text-white z-[9999] top-3 left-3" />
       </Link>
