@@ -1,5 +1,9 @@
+import { useEffect } from "react";
+import { db } from "../../../firebaseConfig";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { useAuth } from "../../../context";
 
 export const ResultsDisplay = ({
   wpm,
@@ -12,7 +16,32 @@ export const ResultsDisplay = ({
   handlePlayAgain: () => void;
   home: () => void;
 }) => {
+  const { user } = useAuth();
   const maxWPM = 300;
+
+  useEffect(() => {
+    const saveGameResults = async () => {
+      if (user && wpm !== null && accuracy !== null) {
+        try {
+          const singleplayerRef = collection(db, "singleplayers");
+
+          await addDoc(singleplayerRef, {
+            userId: user.id,
+            username: user.username,
+            wpm,
+            accuracy,
+            timestamp: serverTimestamp(),
+          });
+          console.log("Game results saved to Firestore!");
+        } catch (error) {
+          console.error("Error saving game results: ", error);
+        }
+      }
+    };
+
+    // Save results when the component mounts and the game is over
+    saveGameResults();
+  }, [user, wpm, accuracy]);
 
   return (
     <div className="flex flex-col items-center justify-center p-6 max-w-[90vw] mx-auto bg-gradient-to-br from-red-500 to-red-700 rounded-lg shadow-2xl text-white">
@@ -32,9 +61,9 @@ export const ResultsDisplay = ({
               text={`${wpm.toFixed(2)} WPM`}
               styles={buildStyles({
                 textSize: "16px",
-                pathColor: "#FFC107", // Yellow for the gauge path
+                pathColor: "#FFC107",
                 textColor: "#FFC107",
-                trailColor: "#333", // Dark background for the gauge
+                trailColor: "#333",
               })}
             />
           </div>
