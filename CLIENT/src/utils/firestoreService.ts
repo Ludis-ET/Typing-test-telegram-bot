@@ -1,10 +1,22 @@
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
 export const getUserFromFirestore = async (userId: string) => {
-  const userRef = doc(db, "users", userId);
-  const userSnap = await getDoc(userRef);
-  return userSnap.exists() ? userSnap.data() : null;
+  const usersCollection = collection(db, "users");
+  const userQuery = query(usersCollection, where("id", "==", userId));
+  const querySnapshot = await getDocs(userQuery);
+
+  if (!querySnapshot.empty) {
+    return querySnapshot.docs[0].data();
+  }
+  return null;
 };
 
 export const addUserToFirestore = async (userId: string, username: string) => {
