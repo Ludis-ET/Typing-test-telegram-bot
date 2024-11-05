@@ -36,7 +36,15 @@ export const Game1 = () => {
   if (display === 1) {
     return <SinglePlayer duration={duration} diff={difficulty} home={goHome} />;
   } else if (display === 2) {
-    return <MultiPlayer />
+    return (
+      <MultiPlayer
+        diff={difficulty}
+        duration={duration}
+        home={goHome}
+        roomtype={roomType}
+        selected={selectedOption}
+      />
+    );
   }
 
   return (
