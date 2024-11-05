@@ -42,38 +42,14 @@ bot.onText(/\/start/, (msg: Message) => {
         [
           {
             text: "Start Game",
-            callback_data: JSON.stringify({
-              action: "start_game",
-              userId: msg.from?.id,
-              userName,
-            }),
+            url: `https://bot-two-livid.vercel.app/?userId=${
+              msg.from?.id
+            }&userName=${encodeURIComponent(userName)}`,
           },
         ],
       ],
     },
   });
-});
-
-bot.on("callback_query", async (query) => {
-  if (query.message) {
-    const chatId = query.message.chat.id;
-    let action, userId, userName;
-    if (query.data) {
-      ({ action, userId, userName } = JSON.parse(query.data));
-    }
-
-    if (action === "start_game") {
-      bot.sendMessage(chatId, "The game is starting... 🚀");
-      await axios.post("http://your-frontend-url/api/start-game", {
-        userId,
-        userName,
-      });
-      bot.sendMessage(
-        chatId,
-        "Click here to play the game: [Play Now](http://your-frontend-url)"
-      );
-    }
-  }
 });
 
 app.listen(PORT, () => {

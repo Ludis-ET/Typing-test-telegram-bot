@@ -1,26 +1,8 @@
-import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Home, Game1 } from "./components";
 import { motion } from "framer-motion";
-import axios from "axios";
 
 const App = () => {
-  const [userData, setUserData] = useState(null);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(
-          "http://your-backend-url/api/user-data"
-        );
-        setUserData(response.data);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
 
   return (
     <div className="relative h-screen overflow-hidden flex flex-col items-center justify-start font-sans text-purple-light p-6">
@@ -49,8 +31,8 @@ const App = () => {
         </div>
       </div>
       <Routes>
-        <Route path="*" element={<Home userData={userData} />} />
-        <Route path="/game1" element={<Game1 userData={userData} />} />
+        <Route path="*" element={<Home />} />
+        <Route path="/game1" element={<Game1 />} />
       </Routes>
     </div>
   );

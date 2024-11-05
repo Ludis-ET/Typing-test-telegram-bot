@@ -4,6 +4,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { SinglePlayer } from "./single/SinglePlayer";
 import { Diff, Duration, Mode } from "./Select";
+import queryString from "query-string";
 
 export const Game1 = () => {
   const [roomOption, setRoomOption] = useState<string>("single");
@@ -12,20 +13,18 @@ export const Game1 = () => {
   const [multi, setMulti] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const [display, setDisplay] = useState<number>(0);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [user, setUser] = useState({
+    id: "",
+    username: "",
+  });
 
   useEffect(() => {
-    const userData = window.localStorage.getItem("telegramUser");
-    if (userData) {
-      setCurrentUser(JSON.parse(userData));
-    }
+    const { userId, userName } = queryString.parse(window.location.search);
+    setUser({
+      id: userId as string,
+      username: userName as string,
+    });
   }, []);
-
-  const handleLogin = () => {
-    // Redirect the user to the Telegram login page
-    const telegramLoginUrl = `https://telegram.me/leotypebot?start=login`;
-    window.open(telegramLoginUrl, "_self"); // or "_blank" for a new tab
-  };
 
   const handleSubmit = () => {
     setLoading(true);
@@ -56,13 +55,7 @@ export const Game1 = () => {
 
   return (
     <div className="flex flex-col items-center justify-center max-h-screen text-white p-4">
-      {currentUser ? (
-        <h1 className="text-center text-3xl">
-          Logged in as {currentUser}
-        </h1>
-      ) : (
-        <h1 className="text-center text-3xl">Not logged in</h1>
-      )}
+      {user.id} {user.username}
       <Link to="/">
         <FaArrowLeft className="text-3xl absolute text-white z-[9999] top-3 left-3" />
       </Link>
@@ -109,12 +102,6 @@ export const Game1 = () => {
           </>
         )}
       </div>
-
-      {/* Telegram Login Button */}
-      <button onClick={handleLogin} className="button mb-4">
-        Log in with Telegram
-      </button>
-
       {loading && (
         <motion.div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black opacity-75 z-50">
           <div className="flex flex-col items-center">
