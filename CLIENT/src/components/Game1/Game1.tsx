@@ -4,6 +4,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { SinglePlayer } from "./single/SinglePlayer";
 import { Diff, Duration, Mode } from "./Select";
+import { MultiPlayerChoose } from "./multi/MultiPlayerChoose";
 import { MultiPlayer } from "./multi/MultiPlayer";
 
 export const Game1 = () => {
@@ -12,11 +13,13 @@ export const Game1 = () => {
   const [duration, setDuration] = useState<string>("1 min");
   const [loading, setLoading] = useState<boolean>(false);
   const [display, setDisplay] = useState<number>(0);
+  const [selectedOption, setSelectedOption] = useState<string>("");
+  const [roomType, setRoomType] = useState<string>("");
 
-  const handleSubmit = () => {
+  const handleSubmit = (n: number) => {
     setLoading(true);
     const timer = setTimeout(() => {
-      setDisplay(1);
+      setDisplay(n);
       setLoading(false);
     }, 2000);
 
@@ -31,13 +34,9 @@ export const Game1 = () => {
   };
 
   if (display === 1) {
-    return (
-      <SinglePlayer
-        duration={duration as string}
-        diff={difficulty as string}
-        home={goHome}
-      />
-    );
+    return <SinglePlayer duration={duration} diff={difficulty} home={goHome} />;
+  } else if (display === 2) {
+    return <MultiPlayer />
   }
 
   return (
@@ -56,14 +55,22 @@ export const Game1 = () => {
         </div>
       </div>
       <div>
-        <Duration dur={duration as string} setdur={setDuration} />
+        <Duration dur={duration} setdur={setDuration} />
       </div>
       {roomOption === "single" && (
-        <button onClick={handleSubmit} className="button m-8">
+        <button onClick={() => handleSubmit(1)} className="button m-8">
           Start Game
         </button>
       )}
-      {roomOption === "multi" && <MultiPlayer load={setLoading} />}
+      {roomOption === "multi" && (
+        <MultiPlayerChoose
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
+          roomType={roomType}
+          setRoomType={setRoomType}
+          submit={handleSubmit}
+        />
+      )}
       {loading && (
         <motion.div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black opacity-75 z-50">
           <div className="flex flex-col items-center">
