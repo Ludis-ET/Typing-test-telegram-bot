@@ -76,6 +76,8 @@ export const SinglePlayer = ({
         accuracy={accuracy}
         handlePlayAgain={handlePlayAgain}
         home={home}
+        duration={duration}
+        difficulty={diff}
       />
     );
   }

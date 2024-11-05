@@ -10,11 +10,15 @@ export const ResultsDisplay = ({
   accuracy,
   handlePlayAgain,
   home,
+  duration,
+  difficulty,
 }: {
   wpm: number | null;
   accuracy: string | null;
   handlePlayAgain: () => void;
   home: () => void;
+  duration: string;
+  difficulty: string;
 }) => {
   const { user } = useAuth();
   const maxWPM = 300;
@@ -28,6 +32,8 @@ export const ResultsDisplay = ({
           await addDoc(singleplayerRef, {
             userId: user.id,
             username: user.username,
+            duration,
+            difficulty,
             wpm,
             accuracy,
             timestamp: serverTimestamp(),
@@ -39,9 +45,8 @@ export const ResultsDisplay = ({
       }
     };
 
-    // Save results when the component mounts and the game is over
     saveGameResults();
-  }, [user, wpm, accuracy]);
+  }, [user, wpm, accuracy, duration, difficulty]);
 
   return (
     <div className="flex flex-col items-center justify-center p-6 max-w-[90vw] mx-auto bg-gradient-to-br from-red-500 to-red-700 rounded-lg shadow-2xl text-white">
