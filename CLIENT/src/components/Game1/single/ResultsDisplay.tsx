@@ -21,7 +21,7 @@ export const ResultsDisplay = ({
   difficulty: string;
 }) => {
   const { user } = useAuth();
-  const maxWPM = 300;
+  const maxWPM = 120;
 
   useEffect(() => {
     const saveGameResults = async () => {
@@ -49,48 +49,59 @@ export const ResultsDisplay = ({
   }, [user, wpm, accuracy, duration, difficulty]);
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 max-w-[90vw] mx-auto bg-gradient-to-br from-red-500 to-red-700 rounded-lg shadow-2xl text-white">
-      <h2 className="text-4xl font-extrabold mb-4 text-center tracking-wider drop-shadow-lg">
-        Game Over
-      </h2>
+    <div className="flex flex-col items-center w-full justify-center h-screen bg-gradient-to-r from-black to-purple">
+      <h1 className="text-2xl font-bold mb-8">YOUR RESULT.</h1>
 
-      {wpm !== null && accuracy !== null && (
-        <>
-          <p className="text-xl mb-2">Your Results:</p>
-
-          {/* WPM Gauge */}
-          <div className="w-32 h-32 mb-4">
-            <CircularProgressbar
-              value={wpm}
-              maxValue={maxWPM}
-              text={`${wpm.toFixed(2)} WPM`}
-              styles={buildStyles({
-                textSize: "16px",
-                pathColor: "#FFC107",
-                textColor: "#FFC107",
-                trailColor: "#333",
-              })}
-            />
+      <div className="relative flex flex-col items-center justify-center w-56 h-56 mb-8">
+        <CircularProgressbar
+          value={wpm ?? 0}
+          maxValue={maxWPM}
+          text={`${wpm?.toFixed(0) ?? 0} WPM`}
+          styles={buildStyles({
+            textSize: "16px",
+            pathColor: "#9D4EDD",
+            textColor: "#fff",
+            trailColor: "#d1d5db",
+          })}
+        />
+      </div>
+      <div className="flex flex-col w-full px-12 gap-2 mb-4">
+        <div className="flex justify-around items-center">
+          <div className="border-b pb-2 border-gray-500">
+            <p className="text-lg font-bold text-white">Accuracy</p>
+            <p className="text-gray-400 text-md">{accuracy}</p>
           </div>
-
-          <p className="text-xl font-semibold">
-            Accuracy: <span className="text-yellow-300">{accuracy}</span>
-          </p>
-        </>
-      )}
-
-      <div className="flex space-x-4 mt-6">
-        <button
-          onClick={handlePlayAgain}
-          className="px-6 py-2 bg-yellow-400 text-gray-800 rounded-lg shadow hover:bg-yellow-500 transition duration-200"
-        >
-          Play Again
-        </button>
+          <div className="border-b pb-2 border-gray-500">
+            <p className="text-lg font-bold text-white">Time Taken</p>
+            <p className="text-gray-400 text-md">{duration}</p>
+          </div>
+        </div>
+        <div className="flex justify-around items-center">
+          <div className="border-b pb-2 border-gray-500">
+            <p className="text-lg font-bold text-white">Difficulty</p>
+            <p className="text-gray-400 text-md">{difficulty}</p>
+          </div>
+          <div className="border-b pb-2 border-gray-500">
+            <p className="text-lg font-bold text-white">People Average</p>
+            <p className="text-gray-400 text-md">40 WPM</p>
+          </div>
+        </div>
+      </div>
+      <div className="flex gap-4">
         <button
           onClick={home}
-          className="px-6 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg shadow transition duration-200"
+          className="px-4 py-2 bg-gray-800 text-white font-bold rounded-md shadow"
         >
-          Home
+          Restart
+        </button>
+        <button
+          onClick={handlePlayAgain}
+          className="px-4 py-2 bg-gray-800 text-white font-bold rounded-md shadow"
+        >
+         Home
+        </button>
+        <button className="px-4 py-2 bg-gray-800 text-white font-bold rounded-md shadow">
+          Exit
         </button>
       </div>
     </div>

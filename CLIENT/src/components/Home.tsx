@@ -56,7 +56,7 @@ export const Home = () => {
 
   return (
     <>
-      <h1 className="text-4xl font-bold mb-4 text-white">LeoTYPE Games</h1>
+      <h1 className="text-4xl font-bold my-4 text-white">LeoTYPE Games</h1>
       <p className="text-sm text-center mb-6 text-gray-400">
         Discover games to test your skills! Click the arrows to explore.
       </p>

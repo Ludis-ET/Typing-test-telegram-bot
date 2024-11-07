@@ -48,7 +48,7 @@ export const Game1 = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center max-h-screen overflow-y-auto overflow-x-hidden text-white p-4">
+    <div className="flex flex-col items-center justify-center max-h-screen overflow-y-auto overflow-x-hidden text-white p-12">
       <Link to="/">
         <FaArrowLeft className="text-3xl absolute text-white z-[9999] top-3 left-3" />
       </Link>

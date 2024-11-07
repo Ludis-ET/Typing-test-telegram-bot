@@ -15,7 +15,7 @@ const App = () => {
   }, []);
 
   return (
-    <div className="relative h-screen overflow-hidden flex flex-col items-center justify-start font-sans text-purple-light p-6">
+    <div className="relative h-screen overflow-hidden flex flex-col items-center justify-start font-sans text-purple-light">
       <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:#000;]"></div>
       <div className="absolute inset-0 -z-10 h-full w-full overflow-hidden">
         <div className="relative h-full w-full [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
