@@ -82,7 +82,7 @@ export const ResultsDisplay = ({
             <p className="text-gray-400 text-md">{difficulty}</p>
           </div>
           <div className="border-b pb-2 border-gray-500">
-            <p className="text-lg font-bold text-white">People Average</p>
+            <p className="text-lg font-bold text-white">Others Av'</p>
             <p className="text-gray-400 text-md">40 WPM</p>
           </div>
         </div>
