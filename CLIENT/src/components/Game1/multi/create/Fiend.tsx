@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { db } from "../../../../firebaseConfig";
 import { ref, set, onValue, push } from "firebase/database";
 
-export const Random = ({
+export const Friend = ({
   diff,
   duration,
   roomtype,
@@ -40,7 +40,7 @@ export const Random = ({
   return (
     <div>
       <h2>Room ID: {roomId}</h2>
-      <p>Waiting for players to join...</p>
+      <p>Share this code with a friend to join.</p>
       <ul>
         {users.map((user, index) => (
           <li key={index}>{user}</li>
