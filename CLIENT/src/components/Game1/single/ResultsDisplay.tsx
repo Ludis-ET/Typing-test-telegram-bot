@@ -49,17 +49,17 @@ export const ResultsDisplay = ({
   }, [user, wpm, accuracy, duration, difficulty]);
 
   return (
-    <div className="flex flex-col items-center w-full justify-center h-screen bg-gradient-to-r from-black to-purple">
+    <div className="flex flex-col items-center w-full justify-center h-screen">
       <h1 className="text-2xl font-bold mb-8">YOUR RESULT.</h1>
 
-      <div className="relative flex flex-col items-center justify-center w-56 h-56 mb-8">
+      <div className="relative flex flex-col items-center justify-center w-56 h-56 mb-8 font-bold">
         <CircularProgressbar
           value={wpm ?? 0}
           maxValue={maxWPM}
           text={`${wpm?.toFixed(0) ?? 0} WPM`}
           styles={buildStyles({
             textSize: "16px",
-            pathColor: "#9D4EDD",
+            pathColor: "#000",
             textColor: "#fff",
             trailColor: "#d1d5db",
           })}
@@ -89,16 +89,16 @@ export const ResultsDisplay = ({
       </div>
       <div className="flex gap-4">
         <button
-          onClick={home}
-          className="px-4 py-2 bg-gray-800 text-white font-bold rounded-md shadow"
-        >
-          Restart
-        </button>
-        <button
           onClick={handlePlayAgain}
           className="px-4 py-2 bg-gray-800 text-white font-bold rounded-md shadow"
         >
-         Home
+          Play Again
+        </button>
+        <button
+          onClick={home}
+          className="px-4 py-2 bg-gray-800 text-white font-bold rounded-md shadow"
+        >
+          Home
         </button>
         <button className="px-4 py-2 bg-gray-800 text-white font-bold rounded-md shadow">
           Exit
