@@ -13,33 +13,32 @@ export const Friend = ({
 }: {
   diff: string;
   duration: string;
-
   roomtype: string;
 }) => {
-  console.log(diff, duration, roomtype);
+    console.log(diff, duration, roomtype)
   const [roomKey, setRoomKey] = useState<string | null>(null);
-  const [users, setUsers] = useState<string[]>([]);
+  const [users, setUsers] = useState<{ [id: string]: string }>({});
   const { user } = useAuth();
 
   useEffect(() => {
-    // Create a friend room and generate a unique room key
     if (user && !roomKey) {
+      // Generate a unique room key
       const newRoomKey = uuidv4();
       setRoomKey(newRoomKey);
 
-      // Set the creator in the room
+      // Create a new room with the creator's details
       const roomRef = ref(realDb, `friendrooms/${newRoomKey}`);
       set(roomRef, {
         creatorName: user.username,
         users: {
-          [user.username]: true,
+          [user.id]: user.username, // Store the creator with ID-to-username mapping
         },
       });
 
-      // Listen for users joining the room
+      // Listen for updates to users in the room
       onValue(ref(realDb, `friendrooms/${newRoomKey}/users`), (snapshot) => {
         const userList = snapshot.val();
-        setUsers(userList ? Object.keys(userList) : []);
+        setUsers(userList || {});
       });
     }
   }, [user, roomKey]);
@@ -70,7 +69,7 @@ export const Friend = ({
 
           <p className="mt-6 text-lg">Waiting for a friend to join...</p>
           <div className="flex flex-wrap gap-4 justify-center mt-4">
-            {users.map((username, index) => (
+            {Object.values(users).map((username, index) => (
               <div key={index} className="flex flex-col items-center">
                 <FaUserCircle className="text-4xl text-purple-400" />
                 <span className="text-sm">{username}</span>
@@ -78,7 +77,7 @@ export const Friend = ({
             ))}
           </div>
           <p className="mt-4 text-sm text-gray-400">
-            Total Players: {users.length}
+            Total Players: {Object.keys(users).length}
           </p>
         </div>
       ) : (
