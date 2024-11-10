@@ -5,13 +5,13 @@ export const MultiPlayerChoose = ({
   setSelectedOption,
   roomType,
   setRoomType,
-  submit
+  submit,
 }: {
   selectedOption: string;
   setSelectedOption: (option: string) => void;
   roomType: string;
   setRoomType: (option: string) => void;
-  submit: (n:number) => void;
+  submit: (n: number) => void;
 }) => {
   const handleOptionChange = (option: string) => {
     setSelectedOption(option);
@@ -171,18 +171,14 @@ export const MultiPlayerChoose = ({
         )}
         {roomType.length !== 0 && (
           <div className="w-full flex justify-center">
-            {roomType === "random" ? (
-              selectedOption === "new" ? (
-                <button className="button" onClick={() => submit(2)}>
-                  Create
-                </button>
-              ) : (
-                <button className="button" onClick={() => submit(2)}>
-                  Join Room
-                </button>
-              )
+            {selectedOption === "new" ? (
+              <button className="button" onClick={() => submit(2)}>
+                Create
+              </button>
             ) : (
-              <button className="button">something</button>
+              <button className="button" onClick={() => submit(2)}>
+                Join Room
+              </button>
             )}
           </div>
         )}

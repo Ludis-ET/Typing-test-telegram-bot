@@ -1,5 +1,7 @@
 import { Random as CreateRandom } from "./create/Random";
 import { JoinRoomRandom } from "./join/Random";
+import { Friend as CreateRoomFriend } from "./create/Friend";
+import { FriendJoiner } from "./join/Friend";
 
 export const MultiPlayer = ({
   diff,
@@ -22,15 +24,11 @@ export const MultiPlayer = ({
       {selected === "new" && roomtype === "random" && (
         <CreateRandom diff={diff} duration={duration} roomtype={roomtype} />
       )}
-      {/* {selected === "create" && roomtype === "friend" && (
+      {selected === "new" && roomtype === "friend" && (
         <CreateRoomFriend diff={diff} duration={duration} roomtype={roomtype} />
-      )} */}
-      {selected === "join" && roomtype === "random" && (
-        <JoinRoomRandom />
       )}
-      {/* {selected === "join" && roomtype === "friend" && roomId && (
-        <JoinRoomFriend roomId={roomId} />
-      )} */}
+      {selected === "join" && roomtype === "random" && <JoinRoomRandom />}
+      {selected === "join" && roomtype === "friend" && <FriendJoiner />}
 
       <button
         onClick={home}

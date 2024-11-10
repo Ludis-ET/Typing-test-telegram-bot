@@ -11,7 +11,7 @@ export const JoinRoomRandom = () => {
   const [hasJoinedRoom, setHasJoinedRoom] = useState(false);
   const { user } = useAuth();
 
-  // Fetch available random rooms
+  
   useEffect(() => {
     const roomsRef = ref(realDb, "randomrooms");
     onValue(roomsRef, (snapshot) => {
@@ -26,7 +26,7 @@ export const JoinRoomRandom = () => {
     });
   }, []);
 
-  // Join the selected room once
+  
   const joinRoom = useCallback((roomId: string) => {
     const userRef = ref(realDb, `randomrooms/${roomId}/users`);
     const newUserRef = push(userRef);
@@ -34,13 +34,13 @@ export const JoinRoomRandom = () => {
     setSelectedRoomId(roomId);
     setHasJoinedRoom(true);
 
-    // Listen for users in the selected room
+    
     onValue(ref(realDb, `randomrooms/${roomId}/users`), (snapshot) => {
       const userList = snapshot.val();
       setUsers(userList ? Object.values(userList) : []);
     });
   }, [user]);
-  // Auto-join a random room once rooms are available
+  
   useEffect(() => {
     if (rooms.length > 0 && !hasJoinedRoom && user) {
       const randomRoom = rooms[Math.floor(Math.random() * rooms.length)];
