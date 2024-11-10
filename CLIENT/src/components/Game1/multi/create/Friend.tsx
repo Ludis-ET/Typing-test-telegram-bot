@@ -18,6 +18,7 @@ export const Friend = ({
     console.log(diff, duration, roomtype);
   const [roomKey, setRoomKey] = useState<string | null>(null);
   const [users, setUsers] = useState<{ [id: string]: string }>({});
+  const [status, setStatus] = useState<string>("waiting");
   const { user } = useAuth();
 
   useEffect(() => {
@@ -30,6 +31,8 @@ export const Friend = ({
       const roomRef = ref(realDb, `friendrooms/${newRoomKey}`);
       set(roomRef, {
         creatorName: user.username,
+        creatorId: user.id,
+        status: "waiting",
         users: {
           [user.id]: user.username, // Store the creator's ID-to-username mapping
         },
@@ -39,6 +42,12 @@ export const Friend = ({
       onValue(ref(realDb, `friendrooms/${newRoomKey}/users`), (snapshot) => {
         const userList = snapshot.val();
         setUsers(userList || {});
+      });
+
+      // Listen for status updates
+      onValue(ref(realDb, `friendrooms/${newRoomKey}/status`), (snapshot) => {
+        const currentStatus = snapshot.val();
+        setStatus(currentStatus || "waiting");
       });
     }
   }, [user, roomKey]);
@@ -67,6 +76,15 @@ export const Friend = ({
     }
   }, [roomKey, addUserToRoom]);
 
+  const startGame = () => {
+    if (roomKey && user) {
+      const roomRef = ref(realDb, `friendrooms/${roomKey}`);
+      update(roomRef, {
+        status: "started",
+      });
+    }
+  };
+
   return (
     <div className="p-6 text-white flex flex-col items-center">
       <h2 className="text-3xl font-bold mb-6">Create a Friend Room</h2>
@@ -83,7 +101,18 @@ export const Friend = ({
             Copy Key
           </button>
 
-          <p className="mt-6 text-lg">Waiting for a friend to join...</p>
+          <p className="mt-6 text-lg">Status: {status}</p>
+
+          {status === "waiting" &&
+            user?.id === users[Object.keys(users)[0]] && (
+              <button
+                onClick={startGame}
+                className="mt-4 bg-green-500 px-4 py-2 rounded text-white font-medium hover:bg-green-700"
+              >
+                Start Game
+              </button>
+            )}
+
           <div className="flex flex-wrap gap-4 justify-center mt-4">
             {Object.values(users).map((username, index) => (
               <div key={index} className="flex flex-col items-center">
