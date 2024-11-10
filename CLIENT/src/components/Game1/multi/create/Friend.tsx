@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { realDb } from "../../../../firebaseConfig";
-import { ref, set, onValue } from "firebase/database";
+import { ref, set, onValue, update } from "firebase/database";
 import { useAuth } from "../../../../context";
 import { FaUserCircle } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
@@ -15,7 +15,7 @@ export const Friend = ({
   duration: string;
   roomtype: string;
 }) => {
-    console.log(diff, duration, roomtype)
+    console.log(diff, duration, roomtype);
   const [roomKey, setRoomKey] = useState<string | null>(null);
   const [users, setUsers] = useState<{ [id: string]: string }>({});
   const { user } = useAuth();
@@ -26,12 +26,12 @@ export const Friend = ({
       const newRoomKey = uuidv4();
       setRoomKey(newRoomKey);
 
-      // Create a new room with the creator's details
+      // Create a new room and add the creator's details
       const roomRef = ref(realDb, `friendrooms/${newRoomKey}`);
       set(roomRef, {
         creatorName: user.username,
         users: {
-          [user.id]: user.username, // Store the creator with ID-to-username mapping
+          [user.id]: user.username, // Store the creator's ID-to-username mapping
         },
       });
 
@@ -43,13 +43,29 @@ export const Friend = ({
     }
   }, [user, roomKey]);
 
-  // Function to copy the room key to clipboard
   const copyRoomKey = () => {
     if (roomKey) {
       navigator.clipboard.writeText(roomKey);
       alert("Room key copied to clipboard!");
     }
   };
+
+  const addUserToRoom = useCallback(() => {
+    if (roomKey && user) {
+      // Update the 'users' object in Firebase with the new user's ID-to-username mapping
+      const userRef = ref(realDb, `friendrooms/${roomKey}/users`);
+      update(userRef, {
+        [user.id]: user.username,
+      });
+    }
+  }, [roomKey, user]);
+
+  useEffect(() => {
+    // Automatically add user when the room key is available and the user has joined
+    if (roomKey) {
+      addUserToRoom();
+    }
+  }, [roomKey, addUserToRoom]);
 
   return (
     <div className="p-6 text-white flex flex-col items-center">
