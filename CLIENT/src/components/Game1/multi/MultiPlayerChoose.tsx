@@ -177,7 +177,9 @@ export const MultiPlayerChoose = ({
                   Create
                 </button>
               ) : (
-                <button className="button">Join Room</button>
+                <button className="button" onClick={() => submit(2)}>
+                  Join Room
+                </button>
               )
             ) : (
               <button className="button">something</button>
