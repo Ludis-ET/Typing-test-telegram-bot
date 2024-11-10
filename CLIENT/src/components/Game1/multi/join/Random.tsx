@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { realDb } from "../../../../firebaseConfig";
 import { ref, set, push, onValue } from "firebase/database";
 import { useAuth } from "../../../../context";
+import { FaUserCircle } from "react-icons/fa";
 
 export const JoinRoomRandom = () => {
   const [rooms, setRooms] = useState<{ id: string; creatorName: string }[]>([]);
@@ -21,8 +22,14 @@ export const JoinRoomRandom = () => {
           }))
         : [];
       setRooms(roomsList);
+
+      // If rooms are available, auto-join a random one
+      if (roomsList.length > 0) {
+        const randomRoom = roomsList[Math.floor(Math.random() * roomsList.length)];
+        joinRoom(randomRoom.id);
+      }
     });
-  }, []);
+  },);
 
   // Join the selected room
   const joinRoom = (roomId: string) => {
@@ -41,36 +48,31 @@ export const JoinRoomRandom = () => {
   };
 
   return (
-    <div className="p-6 text-white">
-      <h2 className="text-2xl font-bold mb-4">Join a Random Room</h2>
+    <div className="p-6 text-white flex flex-col items-center">
+      <h2 className="text-3xl font-bold mb-6">Join a Random Room</h2>
 
-      {/* Display list of available rooms */}
-      <ul className="mb-6">
-        {rooms.map((room) => (
-          <li key={room.id} className="mb-2">
-            <span className="mr-4">Room by: {room.creatorName}</span>
-            <button
-              onClick={() => joinRoom(room.id)}
-              className="bg-purple-500 px-4 py-2 rounded-md"
-            >
-              Join Room
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      {/* Display users in the selected room */}
-      {selectedRoomId && (
-        <div>
-          <h3 className="text-xl font-semibold mb-2">
-            Room ID: {selectedRoomId} - Users
-          </h3>
-          <ul>
-            {users.map((user, index) => (
-              <li key={index}>{user}</li>
-            ))}
-          </ul>
+      {rooms.length === 0 ? (
+        <div className="text-center">
+          <p className="text-xl text-gray-300">No rooms available at the moment.</p>
+          <p className="text-gray-400 mt-2">Please check back later or create a new room.</p>
         </div>
+      ) : selectedRoomId ? (
+        <div className="w-full max-w-md p-6 bg-gray-800 rounded-lg shadow-lg">
+          <h3 className="text-2xl font-semibold mb-4">Room ID: {selectedRoomId}</h3>
+          <p className="text-lg mb-4">Players in the room:</p>
+
+          <div className="flex flex-wrap gap-4 justify-center">
+            {users.map((username, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <FaUserCircle className="text-4xl text-purple-400" />
+                <span className="text-sm">{username}</span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-sm text-gray-400">Total Players: {users.length}</p>
+        </div>
+      ) : (
+        <p>Loading...</p>
       )}
     </div>
   );
