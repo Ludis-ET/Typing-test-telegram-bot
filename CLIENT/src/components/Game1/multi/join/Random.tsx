@@ -29,7 +29,7 @@ export const JoinRoomRandom = () => {
         joinRoom(randomRoom.id);
       }
     });
-  },);
+  },[]);
 
   // Join the selected room
   const joinRoom = (roomId: string) => {
