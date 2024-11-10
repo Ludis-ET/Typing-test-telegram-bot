@@ -8,9 +8,10 @@ export const JoinRoomRandom = () => {
   const [rooms, setRooms] = useState<{ id: string; creatorName: string }[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const [users, setUsers] = useState<string[]>([]);
+  const [hasJoinedRoom, setHasJoinedRoom] = useState(false);
   const { user } = useAuth();
 
-  // Fetch available random rooms
+  // Fetch available random rooms once
   useEffect(() => {
     const roomsRef = ref(realDb, "randomrooms");
     onValue(roomsRef, (snapshot) => {
@@ -23,21 +24,23 @@ export const JoinRoomRandom = () => {
         : [];
       setRooms(roomsList);
 
-      // If rooms are available, auto-join a random one
-      if (roomsList.length > 0) {
-        const randomRoom = roomsList[Math.floor(Math.random() * roomsList.length)];
+      // If rooms are available, auto-join a random one if not already joined
+      if (roomsList.length > 0 && !hasJoinedRoom) {
+        const randomRoom =
+          roomsList[Math.floor(Math.random() * roomsList.length)];
         joinRoom(randomRoom.id);
       }
     });
-  },[]);
+  }, [hasJoinedRoom]);
 
-  // Join the selected room
+  // Join the selected room once
   const joinRoom = (roomId: string) => {
-    if (user) {
+    if (user && !hasJoinedRoom) {
       const userRef = ref(realDb, `randomrooms/${roomId}/users`);
       const newUserRef = push(userRef);
       set(newUserRef, user.username);
       setSelectedRoomId(roomId);
+      setHasJoinedRoom(true); // Prevent further joining
 
       // Listen for users in the selected room
       onValue(ref(realDb, `randomrooms/${roomId}/users`), (snapshot) => {
@@ -53,12 +56,18 @@ export const JoinRoomRandom = () => {
 
       {rooms.length === 0 ? (
         <div className="text-center">
-          <p className="text-xl text-gray-300">No rooms available at the moment.</p>
-          <p className="text-gray-400 mt-2">Please check back later or create a new room.</p>
+          <p className="text-xl text-gray-300">
+            No rooms available at the moment.
+          </p>
+          <p className="text-gray-400 mt-2">
+            Please check back later or create a new room.
+          </p>
         </div>
       ) : selectedRoomId ? (
         <div className="w-full max-w-md p-6 bg-gray-800 rounded-lg shadow-lg">
-          <h3 className="text-2xl font-semibold mb-4">Room ID: {selectedRoomId}</h3>
+          <h3 className="text-2xl font-semibold mb-4">
+            Room ID: {selectedRoomId}
+          </h3>
           <p className="text-lg mb-4">Players in the room:</p>
 
           <div className="flex flex-wrap gap-4 justify-center">
@@ -69,7 +78,9 @@ export const JoinRoomRandom = () => {
               </div>
             ))}
           </div>
-          <p className="mt-4 text-sm text-gray-400">Total Players: {users.length}</p>
+          <p className="mt-4 text-sm text-gray-400">
+            Total Players: {users.length}
+          </p>
         </div>
       ) : (
         <p>Loading...</p>
