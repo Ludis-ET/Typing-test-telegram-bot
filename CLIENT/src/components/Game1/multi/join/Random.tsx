@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { realDb } from "../../../../firebaseConfig";
 import { ref, set, push, onValue } from "firebase/database";
 import { useAuth } from "../../../../context";
@@ -11,7 +11,7 @@ export const JoinRoomRandom = () => {
   const [hasJoinedRoom, setHasJoinedRoom] = useState(false);
   const { user } = useAuth();
 
-  // Fetch available random rooms once
+  // Fetch available random rooms
   useEffect(() => {
     const roomsRef = ref(realDb, "randomrooms");
     onValue(roomsRef, (snapshot) => {
@@ -23,32 +23,30 @@ export const JoinRoomRandom = () => {
           }))
         : [];
       setRooms(roomsList);
-
-      // If rooms are available, auto-join a random one if not already joined
-      if (roomsList.length > 0 && !hasJoinedRoom) {
-        const randomRoom =
-          roomsList[Math.floor(Math.random() * roomsList.length)];
-        joinRoom(randomRoom.id);
-      }
     });
-  }, [hasJoinedRoom]);
+  }, []);
 
   // Join the selected room once
-  const joinRoom = (roomId: string) => {
-    if (user && !hasJoinedRoom) {
-      const userRef = ref(realDb, `randomrooms/${roomId}/users`);
-      const newUserRef = push(userRef);
-      set(newUserRef, user.username);
-      setSelectedRoomId(roomId);
-      setHasJoinedRoom(true); // Prevent further joining
+  const joinRoom = useCallback((roomId: string) => {
+    const userRef = ref(realDb, `randomrooms/${roomId}/users`);
+    const newUserRef = push(userRef);
+    set(newUserRef, user?.username);
+    setSelectedRoomId(roomId);
+    setHasJoinedRoom(true);
 
-      // Listen for users in the selected room
-      onValue(ref(realDb, `randomrooms/${roomId}/users`), (snapshot) => {
-        const userList = snapshot.val();
-        setUsers(userList ? Object.values(userList) : []);
-      });
+    // Listen for users in the selected room
+    onValue(ref(realDb, `randomrooms/${roomId}/users`), (snapshot) => {
+      const userList = snapshot.val();
+      setUsers(userList ? Object.values(userList) : []);
+    });
+  }, [user]);
+  // Auto-join a random room once rooms are available
+  useEffect(() => {
+    if (rooms.length > 0 && !hasJoinedRoom && user) {
+      const randomRoom = rooms[Math.floor(Math.random() * rooms.length)];
+      joinRoom(randomRoom.id);
     }
-  };
+  }, [rooms, hasJoinedRoom, user, joinRoom]);
 
   return (
     <div className="p-6 text-white flex flex-col items-center">
