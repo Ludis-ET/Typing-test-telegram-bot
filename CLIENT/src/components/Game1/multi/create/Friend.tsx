@@ -5,6 +5,7 @@ import { useAuth } from "../../../../context";
 import { FaUserCircle } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 import { AiOutlineCopy } from "react-icons/ai";
+import { Game } from "../Game";
 
 export const Friend = ({
   diff,
@@ -15,7 +16,6 @@ export const Friend = ({
   duration: string;
   roomtype: string;
 }) => {
-    console.log(diff, duration, roomtype);
   const [roomKey, setRoomKey] = useState<string | null>(null);
   const [users, setUsers] = useState<{ [id: string]: string }>({});
   const [status, setStatus] = useState<string>("waiting");
@@ -23,34 +23,33 @@ export const Friend = ({
 
   useEffect(() => {
     if (user && !roomKey) {
-      // Generate a unique room key
       const newRoomKey = uuidv4();
       setRoomKey(newRoomKey);
 
-      // Create a new room and add the creator's details
       const roomRef = ref(realDb, `friendrooms/${newRoomKey}`);
       set(roomRef, {
         creatorName: user.username,
         creatorId: user.id,
+        diff,
+        duration,
+        roomtype,
         status: "waiting",
         users: {
-          [user.id]: user.username, // Store the creator's ID-to-username mapping
+          [user.id]: user.username,
         },
       });
 
-      // Listen for updates to users in the room
       onValue(ref(realDb, `friendrooms/${newRoomKey}/users`), (snapshot) => {
         const userList = snapshot.val();
         setUsers(userList || {});
       });
 
-      // Listen for status updates
       onValue(ref(realDb, `friendrooms/${newRoomKey}/status`), (snapshot) => {
         const currentStatus = snapshot.val();
         setStatus(currentStatus || "waiting");
       });
     }
-  }, [user, roomKey]);
+  }, [user, roomKey, diff, duration, roomtype]);
 
   const copyRoomKey = () => {
     if (roomKey) {
@@ -61,7 +60,6 @@ export const Friend = ({
 
   const addUserToRoom = useCallback(() => {
     if (roomKey && user) {
-      // Update the 'users' object in Firebase with the new user's ID-to-username mapping
       const userRef = ref(realDb, `friendrooms/${roomKey}/users`);
       update(userRef, {
         [user.id]: user.username,
@@ -70,25 +68,33 @@ export const Friend = ({
   }, [roomKey, user]);
 
   useEffect(() => {
-    // Automatically add user when the room key is available and the user has joined
     if (roomKey) {
       addUserToRoom();
     }
   }, [roomKey, addUserToRoom]);
 
   const startGame = () => {
-    if (roomKey && user) {
+    if (roomKey) {
       const roomRef = ref(realDb, `friendrooms/${roomKey}`);
-      update(roomRef, {
-        status: "started",
-      });
+      update(roomRef, { status: "started" });
     }
   };
+
+  if (status === "started" && roomKey) {
+    return (
+      <Game
+        roomId={roomKey}
+        users={users}
+        diff={diff}
+        duration={duration}
+        roomtype="friend"
+      />
+    );
+  }
 
   return (
     <div className="p-6 text-white flex flex-col items-center">
       <h2 className="text-3xl font-bold mb-6">Create a Friend Room</h2>
-
       {roomKey ? (
         <div className="w-full max-w-md p-6 bg-gray-800 rounded-lg shadow-lg text-center">
           <h3 className="text-2xl font-semibold mb-4">Room Key</h3>

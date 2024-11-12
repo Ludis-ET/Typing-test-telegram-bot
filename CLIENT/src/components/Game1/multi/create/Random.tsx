@@ -4,6 +4,7 @@ import { ref, set, onValue, push, update, remove } from "firebase/database";
 import { useAuth } from "../../../../context";
 import { FaUserCircle } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { Game } from "../Game";
 
 interface RandomProps {
   diff: string;
@@ -14,6 +15,7 @@ interface RandomProps {
 export const Random = ({ diff, duration, roomtype }: RandomProps) => {
   const [roomId, setRoomId] = useState<string | null>(null);
   const [users, setUsers] = useState<{ [key: string]: string }>({});
+  const [gameStarted, setGameStarted] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -22,7 +24,6 @@ export const Random = ({ diff, duration, roomtype }: RandomProps) => {
       const newRoomId = roomRef.key;
       setRoomId(newRoomId);
 
-      // Create a new room with initial data
       set(roomRef, {
         creatorId: user.id,
         creatorName: user.username,
@@ -33,7 +34,6 @@ export const Random = ({ diff, duration, roomtype }: RandomProps) => {
         status: "waiting",
       });
 
-      // Listen for users joining the room
       const unsubscribe = onValue(
         ref(realDb, `randomrooms/${newRoomId}/users`),
         (snapshot) => {
@@ -42,7 +42,6 @@ export const Random = ({ diff, duration, roomtype }: RandomProps) => {
         }
       );
 
-      // Cleanup function to delete room on unmount
       return () => {
         unsubscribe();
         if (newRoomId) {
@@ -52,16 +51,15 @@ export const Random = ({ diff, duration, roomtype }: RandomProps) => {
     }
   }, [diff, duration, roomtype, user]);
 
-  // Function to start the game (only accessible by the creator)
   const handleStartGame = () => {
     if (roomId && user?.id) {
       update(ref(realDb, `randomrooms/${roomId}`), {
         status: "in-progress",
       });
+      setGameStarted(true);
     }
   };
 
-  // Function to delete the room and navigate back
   const handleBackToHome = () => {
     if (roomId) {
       remove(ref(realDb, `randomrooms/${roomId}`));
@@ -72,12 +70,22 @@ export const Random = ({ diff, duration, roomtype }: RandomProps) => {
   const isCreator = user?.id === Object.keys(users)[0];
   const totalUsers = Object.keys(users).length;
 
+  if (gameStarted && roomId) {
+    return (
+      <Game
+        roomId={roomId}
+        users={users}
+        duration={duration}
+        diff={diff}
+        roomtype="random"
+      />
+    );
+  }
+
   return (
     <div className="flex flex-col items-center p-8 text-white rounded-lg shadow-lg max-w-lg mx-auto">
       <h2 className="text-2xl font-bold mb-4">Room ID: {roomId}</h2>
       <p className="text-lg mb-4">Waiting for players to join...</p>
-
-      {/* Display users with icons */}
       <div className="flex flex-col items-center mb-4">
         <div className="flex flex-wrap justify-center gap-4">
           {Object.entries(users).map(([userId, username]) => (
@@ -89,8 +97,6 @@ export const Random = ({ diff, duration, roomtype }: RandomProps) => {
         </div>
         <p className="text-sm mt-2">Players joined: {totalUsers}</p>
       </div>
-
-      {/* Start game button for creator */}
       {isCreator && (
         <motion.button
           whileHover={{ scale: 1.1 }}
@@ -101,8 +107,6 @@ export const Random = ({ diff, duration, roomtype }: RandomProps) => {
           Start Game
         </motion.button>
       )}
-
-      {/* Back to home button */}
       <button
         onClick={handleBackToHome}
         className="mt-4 text-purple-300 underline"
