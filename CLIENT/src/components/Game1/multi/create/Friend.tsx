@@ -84,9 +84,6 @@ export const Friend = ({
     return (
       <Game
         roomId={roomKey}
-        users={users}
-        diff={diff}
-        duration={duration}
         roomtype="friend"
       />
     );

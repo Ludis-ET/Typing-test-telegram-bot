@@ -3,15 +3,16 @@ import { realDb } from "../../../../firebaseConfig";
 import { ref, set, push, onValue } from "firebase/database";
 import { useAuth } from "../../../../context";
 import { FaUserCircle } from "react-icons/fa";
+import { Game } from "../Game";
 
 export const JoinRoomRandom = () => {
   const [rooms, setRooms] = useState<{ id: string; creatorName: string }[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const [users, setUsers] = useState<string[]>([]);
+  const [roomStatus, setRoomStatus] = useState<string>("waiting");
   const [hasJoinedRoom, setHasJoinedRoom] = useState(false);
   const { user } = useAuth();
 
-  
   useEffect(() => {
     const roomsRef = ref(realDb, "randomrooms");
     onValue(roomsRef, (snapshot) => {
@@ -26,27 +27,39 @@ export const JoinRoomRandom = () => {
     });
   }, []);
 
-  
-  const joinRoom = useCallback((roomId: string) => {
-    const userRef = ref(realDb, `randomrooms/${roomId}/users`);
-    const newUserRef = push(userRef);
-    set(newUserRef, user?.username);
-    setSelectedRoomId(roomId);
-    setHasJoinedRoom(true);
+  const joinRoom = useCallback(
+    (roomId: string) => {
+      const userRef = ref(realDb, `randomrooms/${roomId}/users`);
+      const newUserRef = push(userRef);
+      set(newUserRef, user?.username);
+      setSelectedRoomId(roomId);
+      setHasJoinedRoom(true);
 
-    
-    onValue(ref(realDb, `randomrooms/${roomId}/users`), (snapshot) => {
-      const userList = snapshot.val();
-      setUsers(userList ? Object.values(userList) : []);
-    });
-  }, [user]);
-  
+      // Listen for updates to users in the room
+      onValue(ref(realDb, `randomrooms/${roomId}/users`), (snapshot) => {
+        const userList = snapshot.val();
+        setUsers(userList ? Object.values(userList) : []);
+      });
+
+      // Listen for updates to the room status
+      onValue(ref(realDb, `randomrooms/${roomId}/status`), (snapshot) => {
+        const status = snapshot.val();
+        setRoomStatus(status || "waiting");
+      });
+    },
+    [user]
+  );
+
   useEffect(() => {
     if (rooms.length > 0 && !hasJoinedRoom && user) {
       const randomRoom = rooms[Math.floor(Math.random() * rooms.length)];
       joinRoom(randomRoom.id);
     }
   }, [rooms, hasJoinedRoom, user, joinRoom]);
+
+  if (roomStatus === "in-progress" && users.includes(user?.username || "")) {
+    return <Game roomId={selectedRoomId as string} roomtype="random" />;
+  }
 
   return (
     <div className="p-6 text-white flex flex-col items-center">

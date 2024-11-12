@@ -67,16 +67,12 @@ export const Random = ({ diff, duration, roomtype }: RandomProps) => {
     window.history.back();
   };
 
-  const isCreator = user?.id === Object.keys(users)[0];
   const totalUsers = Object.keys(users).length;
 
   if (gameStarted && roomId) {
     return (
       <Game
         roomId={roomId}
-        users={users}
-        duration={duration}
-        diff={diff}
         roomtype="random"
       />
     );
@@ -97,16 +93,14 @@ export const Random = ({ diff, duration, roomtype }: RandomProps) => {
         </div>
         <p className="text-sm mt-2">Players joined: {totalUsers}</p>
       </div>
-      {isCreator && (
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={handleStartGame}
-          className="bg-purple-500 text-white px-6 py-2 rounded-md mt-4"
-        >
-          Start Game
-        </motion.button>
-      )}
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={handleStartGame}
+        className="bg-purple-500 text-white px-6 py-2 rounded-md mt-4"
+      >
+        Start Game
+      </motion.button>
       <button
         onClick={handleBackToHome}
         className="mt-4 text-purple-300 underline"
