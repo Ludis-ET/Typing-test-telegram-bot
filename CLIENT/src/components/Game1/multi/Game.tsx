@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ref, onValue } from "firebase/database";
 import { realDb, db } from "../../../firebaseConfig";
 import {
@@ -11,6 +11,8 @@ import {
 import { generateRandomPrompt } from "../../../utils/GenerateP";
 import { calculateWPMAndAccuracy } from "../../../utils/CalculateWPM";
 import { useAuth } from "../../../context";
+import { UserInput } from "../single/UserInput";
+import { PromptDisplay } from "../single/PromptDisplay";
 
 interface GameProps {
   roomId: string;
@@ -58,6 +60,7 @@ export const Game = ({ roomId, roomtype }: GameProps) => {
       });
     }
   }, [roomId, roomtype]);
+  const textContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (roomInfo?.status === "in-progress" && countdown > 0) {
@@ -185,16 +188,23 @@ export const Game = ({ roomId, roomtype }: GameProps) => {
         </div>
       ) : (
         <div className="mt-6">
-          <textarea
-            value={userInput}
-            onChange={(e) => {
-              if (!startTime) setStartTime(Date.now());
-              setUserInput(e.target.value);
-            }}
-            placeholder="Type here..."
-            className="w-full h-40 p-4 text-black rounded"
-            disabled={gameOver}
-          />
+          <div className="mb-6 text-lg tracking-wide font-medium">
+            Time Left: <span className="text-yellow-300">{timeLeft} sec</span>
+          </div>
+          <div
+            ref={textContainerRef}
+            className="bg-gray-900 w-[90vw] p-4 rounded-md outline-none max-h-[60vh] overflow-y-scroll"
+          >
+            <UserInput
+              userInput={userInput}
+              setUserInput={setUserInput}
+              gameOver={gameOver}
+              setStartTime={setStartTime}
+              promptText={promptText}
+              setGameOver={setGameOver}
+            />
+            <PromptDisplay promptText={promptText} userInput={userInput} />
+          </div>
           {gameOver && (
             <div className="mt-4">
               <p>Your WPM: {wpm}</p>
