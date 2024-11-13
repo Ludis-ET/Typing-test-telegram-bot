@@ -80,6 +80,7 @@ export const Game = ({ roomId, roomtype }: GameProps) => {
       }, 1000);
       return () => clearInterval(countdownTimer);
     } else if (countdown === 0) {
+      // Start the game timer immediately after countdown ends
       setTimeLeft(durationInSeconds);
     }
   }, [roomInfo, countdown, durationInSeconds]);
