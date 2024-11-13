@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ref, onValue } from "firebase/database";
 import { realDb, db } from "../../../firebaseConfig";
 import {
@@ -11,8 +11,6 @@ import {
 import { generateRandomPrompt } from "../../../utils/GenerateP";
 import { calculateWPMAndAccuracy } from "../../../utils/CalculateWPM";
 import { useAuth } from "../../../context";
-import { UserInput } from "../single/UserInput";
-import { PromptDisplay } from "../single/PromptDisplay";
 
 interface GameProps {
   roomId: string;
@@ -42,7 +40,6 @@ export const Game = ({ roomId, roomtype }: GameProps) => {
   const [wpm, setWPM] = useState<number | null>(null);
   const [accuracy, setAccuracy] = useState<string | null>(null);
   const [leaderboard, setLeaderboard] = useState<PlayerResult[]>([]);
-  const textContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (roomtype === "random") {
@@ -159,6 +156,35 @@ export const Game = ({ roomId, roomtype }: GameProps) => {
     saveResultToFirestore,
   ]);
 
+  const handleUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!startTime) setStartTime(Date.now());
+    const { value } = e.target;
+    setUserInput(value);
+  };
+
+  const renderPrompt = () => {
+    return promptText.split("").map((char, idx) => {
+      let color = "";
+      if (idx < userInput.length) {
+        color = userInput[idx] === char ? "text-green-500" : "text-red-500";
+      } else {
+        color = "text-gray-400";
+      }
+      return (
+        <span
+          key={idx}
+          className={`${color} ${
+            idx === userInput.length
+              ? "border-r-2 border-yellow-300 animate-pulse"
+              : ""
+          }`}
+        >
+          {char}
+        </span>
+      );
+    });
+  };
+
   if (!roomInfo) {
     return <p>Loading room information...</p>;
   }
@@ -196,20 +222,22 @@ export const Game = ({ roomId, roomtype }: GameProps) => {
       ) : (
         <div className="mt-4">
           <p className="mb-2 text-yellow-300">Time Left: {timeLeft} sec</p>
-          <div
-            ref={textContainerRef}
-            className="bg-gray-900 w-full p-4 rounded-md outline-none max-h-48 overflow-y-auto"
-          >
-            <PromptDisplay promptText={promptText} userInput={userInput} />
+
+          <div className="mt-4 bg-gray-700 p-4 rounded-lg text-lg text-center">
+            <div className="flex justify-center items-center">
+              {renderPrompt()}
+            </div>
           </div>
-          <UserInput
-            userInput={userInput}
-            setUserInput={setUserInput}
-            gameOver={gameOver}
-            setStartTime={setStartTime}
-            promptText={promptText}
-            setGameOver={setGameOver}
+
+          <input
+            type="text"
+            className="mt-4 w-full p-2 text-lg rounded bg-gray-600 text-white border-none outline-none"
+            value={userInput}
+            onChange={handleUserInput}
+            disabled={gameOver}
+            placeholder="Start typing..."
           />
+
           {gameOver && (
             <div className="mt-4 text-center">
               <p>Your WPM: {wpm}</p>
