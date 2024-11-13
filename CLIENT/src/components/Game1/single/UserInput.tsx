@@ -1,3 +1,5 @@
+import React, { useEffect, useRef } from "react";
+
 export const UserInput = ({
   userInput,
   setUserInput,
@@ -13,31 +15,40 @@ export const UserInput = ({
   promptText: string;
   setGameOver: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  // Automatically focus the input when the component mounts
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (gameOver) return;
+
     const value = e.target.value;
 
     if (!userInput) {
-      setStartTime(Date.now());
+      setStartTime(Date.now()); 
     }
 
     setUserInput(value);
-    if (value.length >= promptText.length) {
+
+    if (value === promptText) {
       setGameOver(true);
     }
   };
 
   return (
     <input
+      ref={inputRef}
       type="text"
-      id="input"
       value={userInput}
       onChange={handleInputChange}
       placeholder="Start typing here..."
       autoFocus
       autoComplete="off"
       autoCapitalize="off"
-      className="opacity-0 absolute"
+      className="w-full p-2 border rounded-md outline-none bg-gray-800 text-white text-lg"
     />
   );
 };
