@@ -140,11 +140,15 @@ export const Game = ({ roomId, roomtype }: GameProps) => {
       setWPM(calculatedWPM);
       setAccuracy(calculatedAccuracy);
 
-      saveResultToFirestore({
-        username: user?.username || "",
+      const playerResult = {
+        username: user?.username || "Anonymous",
         wpm: calculatedWPM,
         accuracy: calculatedAccuracy,
-      });
+      };
+
+      // Save individual result to Firestore and update leaderboard
+      saveResultToFirestore(playerResult);
+      setLeaderboard((prevLeaderboard) => [...prevLeaderboard, playerResult]);
     }
   }, [
     user,
@@ -174,9 +178,7 @@ export const Game = ({ roomId, roomtype }: GameProps) => {
         <span
           key={idx}
           className={`${color} ${
-            idx === userInput.length
-              ? "border-r-2 border-yellow-300 animate-pulse"
-              : ""
+            idx === userInput.length ? "border-r-2 border-yellow-300 animate-pulse" : ""
           }`}
         >
           {char}
@@ -191,9 +193,7 @@ export const Game = ({ roomId, roomtype }: GameProps) => {
 
   return (
     <div className="p-6 text-white bg-gray-800 rounded-lg shadow-lg max-w-screen-lg mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-center">
-        Game Room: {roomId}
-      </h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">Game Room: {roomId}</h2>
       {roomInfo.status === "in-progress" && countdown > 0 && (
         <div className="mb-4 space-y-2">
           <p>Room Type: {roomtype}</p>
@@ -216,13 +216,12 @@ export const Game = ({ roomId, roomtype }: GameProps) => {
 
       {roomInfo.status === "in-progress" && countdown > 0 ? (
         <p className="text-center text-lg font-semibold">
-          Starting in: <span className="text-yellow-300">{countdown}</span>{" "}
-          seconds
+          Starting in: <span className="text-yellow-300">{countdown}</span> seconds
         </p>
       ) : (
         <div className="mt-4">
           <p className="mb-2 text-yellow-300">Time Left: {timeLeft} sec</p>
-
+          
           <div className="mt-4 bg-gray-700 p-4 rounded-lg text-lg text-center">
             <div className="flex justify-center items-center">
               {renderPrompt()}
@@ -251,8 +250,10 @@ export const Game = ({ roomId, roomtype }: GameProps) => {
         <h3 className="text-lg font-semibold">Leaderboard</h3>
         <ul className="space-y-1">
           {leaderboard.map((player, index) => (
-            <li key={index} className="text-sm">
-              {player.username} - WPM: {player.wpm}, Accuracy: {player.accuracy}
+            <li key={index} className="flex justify-between bg-gray-700 p-2 rounded">
+              <span>{player.username}</span>
+              <span>WPM: {player.wpm}</span>
+              <span>Accuracy: {player.accuracy}</span>
             </li>
           ))}
         </ul>
