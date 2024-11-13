@@ -198,18 +198,18 @@ export const Game = ({ roomId, roomtype }: GameProps) => {
           <p className="mb-2 text-yellow-300">Time Left: {timeLeft} sec</p>
           <div
             ref={textContainerRef}
-            className="bg-gray-900 w-full p-4 rounded-md outline-none max-h-48 overflow-y-scroll"
+            className="bg-gray-900 w-full p-4 rounded-md outline-none max-h-48 overflow-y-auto"
           >
-            <UserInput
-              userInput={userInput}
-              setUserInput={setUserInput}
-              gameOver={gameOver}
-              setStartTime={setStartTime}
-              promptText={promptText}
-              setGameOver={setGameOver}
-            />
             <PromptDisplay promptText={promptText} userInput={userInput} />
           </div>
+          <UserInput
+            userInput={userInput}
+            setUserInput={setUserInput}
+            gameOver={gameOver}
+            setStartTime={setStartTime}
+            promptText={promptText}
+            setGameOver={setGameOver}
+          />
           {gameOver && (
             <div className="mt-4 text-center">
               <p>Your WPM: {wpm}</p>
