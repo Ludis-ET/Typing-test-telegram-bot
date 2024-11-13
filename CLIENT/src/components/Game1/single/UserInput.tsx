@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export const UserInput = ({
   userInput,
@@ -16,39 +16,34 @@ export const UserInput = ({
   setGameOver: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (gameOver) return;
+    const value = e.target.value;
 
-  // Automatically focus the input when the component mounts
+    if (!userInput) {
+      setStartTime(Date.now());
+    }
+
+    setUserInput(value);
+    if (value.length >= promptText.length) {
+      setGameOver(true);
+    }
+  };
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (gameOver) return;
-
-    const value = e.target.value;
-
-    if (!userInput) {
-      setStartTime(Date.now()); 
-    }
-
-    setUserInput(value);
-
-    if (value === promptText) {
-      setGameOver(true);
-    }
-  };
-
   return (
     <input
-      ref={inputRef}
       type="text"
+      id="input"
       value={userInput}
       onChange={handleInputChange}
       placeholder="Start typing here..."
       autoFocus
       autoComplete="off"
       autoCapitalize="off"
-      className="w-full p-2 border rounded-md outline-none bg-gray-800 text-white text-lg"
+      className="opacity-0 absolute"
     />
   );
 };
