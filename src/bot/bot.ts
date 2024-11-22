@@ -1,5 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
-import { handleStart, handleCallbackQuery } from "./handlers";
+import { handleCallbackQuery } from "./handlers";
+import { handleStart } from "./start/handleStart";
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 if (!token)

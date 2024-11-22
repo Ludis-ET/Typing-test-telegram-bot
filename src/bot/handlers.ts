@@ -1,40 +1,22 @@
-import TelegramBot, { Message } from "node-telegram-bot-api";
-import User from "../db/models/user";
-import { welcomeMessage } from "./messages";
+import TelegramBot from "node-telegram-bot-api";
+import { singlePlayerHandler } from "./singleplayer";
+import { multiplayerHandler } from "./multiplayer";
 
-export const handleStart = (bot: TelegramBot) => async (msg: Message) => {
-  const chatId = msg.chat.id;
-  const {
-    id: telegramId,
-    username,
-    first_name: firstName,
-    last_name: lastName,
-  } = msg.from!;
+export const handleCallbackQuery =
+  (bot: TelegramBot) => (query: TelegramBot.CallbackQuery) => {
+    const chatId = query.message!.chat.id;
+    const { data } = query;
 
-  await User.findOneAndUpdate(
-    { telegramId },
-    { username, firstName, lastName },
-    { upsert: true, new: true }
-  );
+    switch (data) {
+      case "single_player":
+        singlePlayerHandler(bot, chatId);
+        break;
 
-  bot.sendMessage(chatId, welcomeMessage(firstName || "Player"), {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: "🎮 Single Player", callback_data: "single_player" }],
-        [{ text: "👥 Multiplayer", callback_data: "multiplayer" }],
-      ],
-    },
-    parse_mode: "HTML",
-  });
-};
+      case "multiplayer":
+        multiplayerHandler(bot, chatId);
+        break;
 
-export const handleCallbackQuery = (bot: TelegramBot) => (query: any) => {
-  const chatId = query.message!.chat.id;
-  const { data } = query;
-
-  if (data === "single_player") {
-    bot.sendMessage(chatId, "🎮 Single Player mode selected! Have fun!");
-  } else if (data === "multiplayer") {
-    bot.sendMessage(chatId, "👥 Multiplayer mode selected! Team up and play!");
-  }
-};
+      default:
+        bot.sendMessage(chatId, "Unknown action. Please try again.");
+    }
+  };
