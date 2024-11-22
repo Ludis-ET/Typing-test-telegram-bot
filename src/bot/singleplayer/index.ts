@@ -4,13 +4,15 @@ import { generateParagraph } from "../utils/generateP";
 
 const userChoices: { [key: number]: { difficulty: string; duration: string } } =
   {};
+const userAnswers: { [key: number]: string } = {};
+const startTime: { [key: number]: number } = {}; // Store start time for each user
 
 const startCountdown = (bot: TelegramBot, chatId: number, duration: string) => {
   let timeRemaining: number;
 
   switch (duration) {
-    case "15sec":
-      timeRemaining = 15;
+    case "20sec":
+      timeRemaining = 20;
       break;
     case "30sec":
       timeRemaining = 30;
@@ -22,40 +24,81 @@ const startCountdown = (bot: TelegramBot, chatId: number, duration: string) => {
       timeRemaining = 180;
       break;
     default:
-      timeRemaining = 15;
+      timeRemaining = 20;
   }
 
   let messageId: number | undefined;
-
+  let gameOver = false;
+  timeRemaining -= 10;
   const intervalId = setInterval(() => {
     if (timeRemaining <= 0) {
       clearInterval(intervalId);
-      bot
-        .sendMessage(chatId, "⏰ Time's up! Challenge over.")
-        .catch((error) => {
-          console.log("Error sending message: 1");
-        });
-    } else {
-      // Delete the previous message if it's available
       if (messageId) {
-        bot.deleteMessage(chatId, messageId).catch((error) => {
-          console.log("Error deleting message: 2");
-        });
+        bot.deleteMessage(chatId, messageId).catch((error) => {});
       }
 
-      // Send a new message with the updated countdown and save the messageId
-      bot
-        .sendMessage(chatId, `Time left: ${timeRemaining} seconds`)
-        .then((sentMessage) => {
-          messageId = sentMessage.message_id; // Store the new message ID
-        })
-        .catch((error) => {
-          console.log("Error sending message: 3");
-        });
+      const endTime = new Date().getTime();
+      const timeSpent = (endTime - startTime[chatId]) / 1000; // Time in seconds
+      const typedMessage = ""; // No message sent, treat as empty
 
-      timeRemaining -= 5;
+      console.log(`Inserted text: ${typedMessage}`);
+      console.log(`Generated paragraph: ${userAnswers[chatId]}`);
+      console.log(`Time spent: ${timeSpent} seconds`);
+
+      if (!gameOver) {
+        bot.sendMessage(chatId, "🎴 Game over.").catch((error) => {});
+      }
+
+      gameOver = true;
+      bot
+        .sendMessage(chatId, "⏰ Time's up! Challenge over.")
+        .catch((error) => {});
+    } else {
+      if (!messageId) {
+        bot
+          .sendMessage(chatId, `${timeRemaining} seconds left...`)
+          .then((sentMessage) => {
+            messageId = sentMessage.message_id;
+          })
+          .catch((error) => {});
+      } else {
+        bot
+          .editMessageText(`${timeRemaining} seconds left...`, {
+            chat_id: chatId,
+            message_id: messageId,
+          })
+          .catch((error) => {});
+      }
+
+      timeRemaining -= 10;
     }
-  }, 5000);
+  }, 10000);
+
+  bot.once("message", (msg) => {
+    if (msg.chat.id === chatId && msg.text) {
+      const typedMessage = msg.text.trim();
+      const endTime = new Date().getTime();
+      const timeSpent = (endTime - startTime[chatId]) / 1000; // Time in seconds
+
+      console.log(`Inserted text: ${typedMessage}`);
+      console.log(`Generated paragraph: ${userAnswers[chatId]}`);
+      console.log(`Time spent: ${timeSpent} seconds`);
+
+      if (typedMessage === userAnswers[chatId]) {
+        clearInterval(intervalId);
+        gameOver = true;
+        bot
+          .sendMessage(chatId, "✅ You completed the challenge! Game over.")
+          .catch((error) => {});
+      } else {
+        clearInterval(intervalId);
+        gameOver = true;
+        bot
+          .sendMessage(chatId, "⏰ Time's up! Challenge over.")
+          .catch((error) => {});
+      }
+    }
+  });
 };
 
 export const singlePlayerHandler = (bot: TelegramBot, chatId: number) => {
@@ -85,14 +128,14 @@ export const handleDifficultySelection =
       userChoices[chatId].difficulty = data;
     }
 
-    bot.deleteMessage(chatId, query.message!.message_id); // Delete the current message
+    bot.deleteMessage(chatId, query.message!.message_id);
     bot.sendMessage(
       chatId,
       "🎯 Great choice! Now, select the duration for the challenge ⏱️:",
       {
         reply_markup: {
           inline_keyboard: [
-            [{ text: "15 seconds ⏳", callback_data: "15sec" }],
+            [{ text: "20 seconds ⏳", callback_data: "20sec" }],
             [{ text: "30 seconds ⏳", callback_data: "30sec" }],
             [{ text: "1 minute ⏰", callback_data: "1min" }],
             [{ text: "3 minutes ⏰", callback_data: "3min" }],
@@ -115,20 +158,20 @@ export const handleDurationSelection =
       userChoices[chatId].duration = data;
     }
 
-    bot.deleteMessage(chatId, query.message!.message_id); // Delete the current message
-    bot.sendMessage(
-      chatId,
-      `🎉 You have selected:\n\nDifficulty: *${userChoices[chatId].difficulty}*\nDuration: *${userChoices[chatId].duration}*\n\nGet ready to start the challenge! 💥`
-    );
+    bot.deleteMessage(chatId, query.message!.message_id);
 
-    // Generate paragraph and send it
     const paragraph = generateParagraph(
       userChoices[chatId].difficulty,
       userChoices[chatId].duration
     );
-    bot.sendMessage(chatId, paragraph);
 
-    // Start the countdown
+    bot.sendMessage(chatId, paragraph, {
+      protect_content: true,
+      disable_web_page_preview: true,
+    });
+
+    userAnswers[chatId] = paragraph;
+    startTime[chatId] = new Date().getTime();
+
     startCountdown(bot, chatId, userChoices[chatId].duration);
   };
-
