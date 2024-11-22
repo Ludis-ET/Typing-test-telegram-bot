@@ -18,6 +18,8 @@ export const welcomeMessageCaption = (name: string): string => `
 ✨ _“Type\\, compete\\, and conquer\\!”_ ✨  
 `;
 
+
+
 export const SinglePlayerMessage = (): string => `
   🎮 *Welcome to Single Player Mode\\!*  
 

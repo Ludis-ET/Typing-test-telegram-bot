@@ -1,0 +1,315 @@
+const easyWords = [
+  "cat",
+  "dog",
+  "house",
+  "tree",
+  "book",
+  "car",
+  "road",
+  "sky",
+  "apple",
+  "ball",
+  "happy",
+  "rain",
+  "sun",
+  "cloud",
+  "star",
+  "fish",
+  "bird",
+  "flower",
+  "wind",
+  "grass",
+  "chair",
+  "table",
+  "pen",
+  "paper",
+  "phone",
+  "computer",
+  "keyboard",
+  "mouse",
+  "shoes",
+  "shirt",
+  "phone",
+  "lamp",
+  "door",
+  "window",
+  "music",
+  "dance",
+  "ice",
+  "fire",
+  "mountain",
+  "river",
+  "boat",
+  "ship",
+  "beach",
+  "stone",
+  "pencil",
+  "notebook",
+  "juice",
+  "food",
+  "drink",
+  "cake",
+  "fruit",
+  "orange",
+  "banana",
+  "melon",
+  "grape",
+  "water",
+  "tea",
+  "coffee",
+  "vegetable",
+  "carrot",
+  "lettuce",
+  "potato",
+  "onion",
+  "tomato",
+  "soup",
+  "pizza",
+  "sandwich",
+  "chips",
+  "hamburger",
+  "salad",
+];
+
+const mediumWords = [
+  "imagine",
+  "eagle",
+  "community",
+  "philosophy",
+  "effort",
+  "technology",
+  "machine",
+  "beautiful",
+  "programming",
+  "mountain",
+  "universe",
+  "planet",
+  "solution",
+  "inspire",
+  "think",
+  "create",
+  "explore",
+  "innovative",
+  "fashion",
+  "invention",
+  "resource",
+  "light",
+  "memory",
+  "unpredictable",
+  "incredible",
+  "process",
+  "potential",
+  "leader",
+  "motivated",
+  "efficiency",
+  "education",
+  "artificial",
+  "intelligence",
+  "knowledge",
+  "research",
+  "biology",
+  "chemistry",
+  "history",
+  "psychology",
+  "engineering",
+  "natural",
+  "humanity",
+  "adventure",
+  "discovery",
+  "improvement",
+  "science",
+  "infrastructure",
+  "system",
+  "feedback",
+  "efficiency",
+  "strategy",
+  "energy",
+  "society",
+  "opportunity",
+  "innovation",
+  "dream",
+  "project",
+  "pathway",
+];
+
+const hardWords = [
+  "ephemeral",
+  "contemplate",
+  "ameliorate",
+  "perseverance",
+  "quintessential",
+  "unparalleled",
+  "supercilious",
+  "disenfranchise",
+  "ubiquitous",
+  "multifaceted",
+  "compartmentalize",
+  "metamorphosis",
+  "conglomerate",
+  "disenfranchise",
+  "philosophical",
+  "unobtrusive",
+  "interdisciplinary",
+  "exacerbate",
+  "transcendent",
+  "exponential",
+  "combustible",
+  "phenomenon",
+  "antithesis",
+  "juxtapose",
+  "omnipresent",
+  "consternation",
+  "differentiated",
+  "vicarious",
+  "accelerate",
+  "perpendicular",
+  "alliteration",
+  "reflexive",
+  "unambiguous",
+  "defenestration",
+  "irrefutable",
+  "anomalous",
+  "disorienting",
+  "consciousness",
+  "transgression",
+  "altruistic",
+  "dysfunction",
+  "paradigm",
+  "ambidextrous",
+  "phenomenal",
+  "heterogeneous",
+  "intellectual",
+  "exemplify",
+  "connoisseur",
+  "nonconformist",
+  "soliloquy",
+  "convivial",
+  "idiosyncratic",
+  "conspiracy",
+  "diabolical",
+  "consortium",
+  "propensity",
+  "meticulous",
+  "narcissistic",
+  "indifferent",
+  "disseminate",
+  "ubiquitous",
+];
+
+const nightmareWords = [
+  "antidisestablishmentarianism",
+  "pneumonoultramicroscopicsilicovolcanoconiosis",
+  "floccinaucinihilipilification",
+  "hippopotomonstrosesquipedaliophobia",
+  "counterproductive",
+  "idiosyncratic",
+  "incomprehensible",
+  "uncharacteristically",
+  "subterranean",
+  "antagonistically",
+  "unquestionably",
+  "counterintuitive",
+  "imponderable",
+  "unpredictability",
+  "inconsequential",
+  "bioluminescence",
+  "revolutionary",
+  "circumlocution",
+  "multinucleated",
+  "counterpart",
+  "extraterrestrial",
+  "unquestionably",
+  "equilibrium",
+  "perpendicular",
+  "retroactive",
+  "superconductivity",
+  "compartmentalized",
+  "metaphysical",
+  "subcutaneous",
+  "indivisibility",
+  "unscrupulously",
+  "photosynthesis",
+  "chlorophyll",
+  "astrophysics",
+  "cryptocurrency",
+  "unbelievable",
+  "unconstitutional",
+  "hydraulic",
+  "cytoplasm",
+  "astronautical",
+  "consciousness",
+  "conglomeration",
+  "parliamentarian",
+  "undocumented",
+  "impenetrable",
+  "comprehension",
+  "phenomenal",
+  "inexhaustible",
+  "philosophical",
+  "epidemiology",
+  "extraterrestrial",
+  "subdivision",
+  "counterproductive",
+  "international",
+  "impervious",
+  "understanding",
+  "indivisible",
+  "anthropological",
+  "unbelievable",
+  "systematic",
+  "superintelligence",
+  "transcontinental",
+];
+
+const getWordsBasedOnDifficulty = (difficulty: string): string[] => {
+  switch (difficulty) {
+    case "easy":
+      return easyWords;
+    case "medium":
+      return mediumWords;
+    case "hard":
+      return hardWords;
+    case "nightmare":
+      return nightmareWords;
+    default:
+      return easyWords;
+  }
+};
+
+const generateRandomParagraph = (
+  difficulty: string,
+  duration: string
+): string => {
+  const words = getWordsBasedOnDifficulty(difficulty);
+  let paragraph = "";
+  const wordCount = getWordCountBasedOnDuration(duration);
+
+  for (let i = 0; i < wordCount; i++) {
+    const randomWord = words[Math.floor(Math.random() * words.length)];
+    paragraph += randomWord + " ";
+  }
+
+  return paragraph.trim();
+};
+
+const getWordCountBasedOnDuration = (duration: string): number => {
+  switch (duration) {
+    case "15sec":
+      return 20;
+    case "30sec":
+      return 40;
+    case "1min":
+      return 60;
+    case "3min":
+      return 120;
+    default:
+      return 20;
+  }
+};
+
+export const generateParagraph = (
+  difficulty: string,
+  duration: string
+): string => {
+  return generateRandomParagraph(difficulty, duration);
+};

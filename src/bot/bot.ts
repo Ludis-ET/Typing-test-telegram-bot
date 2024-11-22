@@ -1,6 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
 import { handleMessage } from "./handlers";
 import { handleStart } from "./start/handleStart";
+import { setupCallbackQueryListener } from "./singleplayer";
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 if (!token)
@@ -17,3 +18,5 @@ bot.on("message", (msg) => {
     handleMessage(bot, chatId, buttonText);
   }
 });
+
+setupCallbackQueryListener(bot); 
