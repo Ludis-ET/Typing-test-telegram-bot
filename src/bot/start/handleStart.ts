@@ -1,6 +1,6 @@
 import TelegramBot, { Message } from "node-telegram-bot-api";
 import User from "../../db/models/user";
-import { welcomeMessage } from "../messages";
+import { welcomeMessageCaption } from "../messages";
 
 export const handleStart = (bot: TelegramBot) => async (msg: Message) => {
   const chatId = msg.chat.id;
@@ -17,13 +17,17 @@ export const handleStart = (bot: TelegramBot) => async (msg: Message) => {
     { upsert: true, new: true }
   );
 
-  bot.sendMessage(chatId, welcomeMessage(firstName || "Player"), {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: "🎮 Single Player", callback_data: "single_player" }],
-        [{ text: "👥 Multiplayer", callback_data: "multiplayer" }],
-      ],
-    },
-    parse_mode: "HTML",
-  });
+  bot.sendPhoto(
+    chatId,
+    "https://i.ibb.co/Z6XNt56/IMG-20241122-200510-961.png",
+    {
+      caption: welcomeMessageCaption(firstName || "Player"),
+      parse_mode: "MarkdownV2",
+      reply_markup: {
+        keyboard: [[{ text: "🎮 Single Player" }, { text: "👥 Multiplayer" }]],
+        resize_keyboard: true,
+        one_time_keyboard: true,
+      },
+    }
+  );
 };
