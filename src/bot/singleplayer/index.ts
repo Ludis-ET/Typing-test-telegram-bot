@@ -1,8 +1,62 @@
 import TelegramBot from "node-telegram-bot-api";
 import { SinglePlayerMessage } from "../messages";
+import { generateParagraph } from "../utils/generateP";
 
 const userChoices: { [key: number]: { difficulty: string; duration: string } } =
   {};
+
+const startCountdown = (bot: TelegramBot, chatId: number, duration: string) => {
+  let timeRemaining: number;
+
+  switch (duration) {
+    case "15sec":
+      timeRemaining = 15;
+      break;
+    case "30sec":
+      timeRemaining = 30;
+      break;
+    case "1min":
+      timeRemaining = 60;
+      break;
+    case "3min":
+      timeRemaining = 180;
+      break;
+    default:
+      timeRemaining = 15;
+  }
+
+  let messageId: number | undefined;
+
+  const intervalId = setInterval(() => {
+    if (timeRemaining <= 0) {
+      clearInterval(intervalId);
+      bot
+        .sendMessage(chatId, "⏰ Time's up! Challenge over.")
+        .catch((error) => {
+          console.log("Error sending message: 1");
+        });
+    } else {
+      // Delete the previous message if it's available
+      if (messageId) {
+        bot.deleteMessage(chatId, messageId).catch((error) => {
+          console.log("Error deleting message: 2");
+        });
+      }
+
+      // Send a new message with the updated countdown and save the messageId
+      bot
+        .sendMessage(chatId, `Time left: ${timeRemaining} seconds`)
+        .then((sentMessage) => {
+          messageId = sentMessage.message_id; // Store the new message ID
+        })
+        .catch((error) => {
+          console.log("Error sending message: 3");
+        });
+
+      timeRemaining -= 5;
+    }
+  }, 5000);
+};
 
 export const singlePlayerHandler = (bot: TelegramBot, chatId: number) => {
   bot.sendMessage(chatId, SinglePlayerMessage(), {
@@ -66,20 +120,15 @@ export const handleDurationSelection =
       chatId,
       `🎉 You have selected:\n\nDifficulty: *${userChoices[chatId].difficulty}*\nDuration: *${userChoices[chatId].duration}*\n\nGet ready to start the challenge! 💥`
     );
+
+    // Generate paragraph and send it
+    const paragraph = generateParagraph(
+      userChoices[chatId].difficulty,
+      userChoices[chatId].duration
+    );
+    bot.sendMessage(chatId, paragraph);
+
+    // Start the countdown
+    startCountdown(bot, chatId, userChoices[chatId].duration);
   };
 
-export const setupCallbackQueryListener = (bot: TelegramBot) => {
-  bot.on("callback_query", (query) => {
-    const { data, message } = query;
-
-    if (message && data) {
-      const chatId = message.chat.id;
-
-      if (["easy", "medium", "hard", "nightmare"].includes(data)) {
-        handleDifficultySelection(bot)(query);
-      } else if (["15sec", "30sec", "1min", "3min"].includes(data)) {
-        handleDurationSelection(bot)(query);
-      }
-    }
-  });
-};

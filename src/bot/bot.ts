@@ -1,7 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
 import { handleMessage } from "./handlers";
 import { handleStart } from "./start/handleStart";
-import { setupCallbackQueryListener } from "./singleplayer";
+import { setupCallbackQueryListener } from "./singleplayer/callback";
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 if (!token)
