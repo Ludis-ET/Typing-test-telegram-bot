@@ -1,1 +1,0 @@
-{"root":["./src/App.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/GameCard.tsx","./src/components/Home.tsx","./src/components/index.ts","./src/components/Game1/Game1.tsx","./src/components/Game1/SinglePlayer.tsx","./src/components/Game1/algorithm.ts","./src/types/Games.ts","./src/utils/generator.ts","./src/utils/wpmCalculator.ts"],"version":"5.6.3"}
