@@ -17,3 +17,22 @@ export const welcomeMessageCaption = (name: string): string => `
 
 ✨ _“Type\\, compete\\, and conquer\\!”_ ✨  
 `;
+
+export const SinglePlayerMessage = (): string => `
+  🎮 *Welcome to Single Player Mode\!*  
+
+  Get ready to test your typing skills\. Choose a difficulty level and let's see how fast you can type 💪
+
+  Here are your options:
+
+  \\- **Easy**: For beginners to get warmed up 🟢  
+  \\- **Medium**: A balanced challenge 🟡  
+  \\- **Hard**: Ready to push your limits 🔴  
+  \\- **Nightmare**: Only for the brave 🔥  
+
+  Choose wisely and start typing\!
+
+  _Good luck, and have fun\!_
+
+  ✨ _“Type hard, type fast, and conquer the challenge\!”_ ✨
+`;

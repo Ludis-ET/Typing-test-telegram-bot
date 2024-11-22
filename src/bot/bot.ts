@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { handleCallbackQuery } from "./handlers";
+import { handleMessage } from "./handlers";
 import { handleStart } from "./start/handleStart";
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -9,4 +9,11 @@ if (!token)
 const bot = new TelegramBot(token, { polling: true });
 
 bot.onText(/\/start/, handleStart(bot));
-bot.on("callback_query", handleCallbackQuery(bot));
+bot.on("message", (msg) => {
+  const chatId = msg.chat.id;
+  const buttonText = msg.text;
+
+  if (buttonText) {
+    handleMessage(bot, chatId, buttonText);
+  }
+});
