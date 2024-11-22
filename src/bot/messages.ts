@@ -19,20 +19,21 @@ export const welcomeMessageCaption = (name: string): string => `
 `;
 
 export const SinglePlayerMessage = (): string => `
-  🎮 *Welcome to Single Player Mode\!*  
+  🎮 *Welcome to Single Player Mode\\!*  
 
-  Get ready to test your typing skills\. Choose a difficulty level and let's see how fast you can type 💪
+  Are you ready to test your typing skills and push your limits\\? 💪  
+  Choose a difficulty level and let's see how fast you can type\\!
 
   Here are your options:
 
-  \\- **Easy**: For beginners to get warmed up 🟢  
-  \\- **Medium**: A balanced challenge 🟡  
-  \\- **Hard**: Ready to push your limits 🔴  
-  \\- **Nightmare**: Only for the brave 🔥  
+  \\\- *🟢 Easy*: For beginners to get warmed up\\.  
+  \\\- *🟡 Medium*: A balanced challenge for steady progress\\.  
+  \\\- *🔴 Hard*: Ready to push your limits and race against the clock\\!  
+  \\\- *🔥 Nightmare*: Only for the brave, a real test of skill\\!
 
-  Choose wisely and start typing\!
+  Choose wisely, and prepare for an exciting typing journey\\!
 
-  _Good luck, and have fun\!_
+  _Good luck, and have fun\\!_
 
-  ✨ _“Type hard, type fast, and conquer the challenge\!”_ ✨
+  ✨ _“Type hard, type fast, and conquer the challenge\\!”_ ✨
 `;
