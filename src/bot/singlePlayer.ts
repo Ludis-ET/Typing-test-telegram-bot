@@ -1,7 +1,11 @@
 import TelegramBot from "node-telegram-bot-api";
-import { SinglePlayerMessage } from "./messages";
+import SinglePlay from "../db/models/singlePlay";
+import { bot } from "./bot";
 import { generateParagraph } from "./utils/generateP";
 import { generateWPM } from "./utils/generateWPM";
+import { forwardText, SinglePlayerMessage } from "./messages";
+
+const botUsername = process.env.BOT_USERNAME || "TypingChallengeBot";
 
 const gameState: {
   [key: number]: { intervalId?: NodeJS.Timeout; gameOver: boolean };
@@ -90,7 +94,6 @@ const startCountdown = (bot: TelegramBot, chatId: number, duration: string) => {
     }
   }, 5000);
 
-  // Save the interval ID
   gameState[chatId].intervalId = intervalId;
 
   bot.once("message", (msg) => {
@@ -186,7 +189,6 @@ export const handleDurationSelection =
 
     bot.deleteMessage(chatId, query.message!.message_id);
 
-    // Clear any previous interval if exists
     if (gameState[chatId]?.intervalId) {
       clearInterval(gameState[chatId].intervalId);
     }
@@ -208,7 +210,7 @@ export const handleDurationSelection =
   };
 
 export const setupCallbackQueryListener = (bot: TelegramBot) => {
-  bot.on("callback_query", (query) => {
+  bot.on("callback_query", async (query) => {
     const { data, message } = query;
 
     if (message && data) {
@@ -219,7 +221,6 @@ export const setupCallbackQueryListener = (bot: TelegramBot) => {
       } else if (["15sec", "30sec", "1min", "3min"].includes(data)) {
         handleDurationSelection(bot)(query);
       } else if (data === "restart_game") {
-        // Clear previous game state
         if (gameState[chatId]?.intervalId) {
           clearInterval(gameState[chatId].intervalId);
         }
@@ -245,6 +246,36 @@ export const setupCallbackQueryListener = (bot: TelegramBot) => {
 
         startCountdown(bot, chatId, userChoices[chatId].duration);
         return;
+      } else if (data && data.startsWith("share_")) {
+        const playId = data.split("_")[1];
+
+        const singlePlay = await SinglePlay.findById(playId);
+        if (!singlePlay) {
+          return bot.sendMessage(
+            message.chat.id,
+            "Could not find the challenge data."
+          );
+        }
+
+        const { difficulty, duration, wpm } = singlePlay;
+
+        bot.sendMessage(
+          message.chat.id,
+          forwardText(difficulty, duration, wpm, botUsername),
+          {
+            parse_mode: "MarkdownV2",
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "Join the Challenge!",
+                    url: `https://t.me/${botUsername}?start=${playId}`,
+                  },
+                ],
+              ],
+            },
+          }
+        );
       }
     }
   });

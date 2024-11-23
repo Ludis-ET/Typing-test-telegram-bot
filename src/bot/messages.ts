@@ -18,8 +18,6 @@ export const welcomeMessageCaption = (name: string): string => `
 ✨ _“Type\\, compete\\, and conquer\\!”_ ✨  
 `;
 
-
-
 export const SinglePlayerMessage = (): string => `
   🎮 *Welcome to Single Player Mode\\!*  
 
@@ -38,4 +36,47 @@ export const SinglePlayerMessage = (): string => `
   _Good luck, and have fun\\!_
 
   ✨ _“Type hard, type fast, and conquer the challenge\\!”_ ✨
+`;
+
+export const forwardText = (
+  difficulty: string,
+  duration: number,
+  wpm: number,
+  botUsername: string
+) => `
+🚀 *Challenge Completed\\!*
+
+Hey there\\! I just completed a typing challenge with difficulty ${difficulty} in ${duration} seconds and scored ${wpm} WPM\\!
+
+Want to challenge yourself too\\? Try it out on this bot: @${botUsername}
+
+Good luck\\! 👾
+`;
+
+export const gameOverCaption = (
+  wpm: number,
+  accuracy: number,
+  missedChars: number,
+  newChars: number,
+  status: string,
+  timeTaken: number,
+  difficulty: string,
+  duration: string
+): string => `
+🎉 *Congratulations\\!*
+> _You've just completed the challenge\\!_
+
+||\`Game Stats:
+- Difficulty: ${difficulty.toUpperCase()}
+- Duration: ${duration} seconds
+- Time Taken: ${timeTaken.toFixed(0)} seconds
+- Missed Characters: ${missedChars}
+- Accuracy: ${accuracy}%
+- New Characters Typed: ${newChars}
+- WPM: ${wpm} WPM
+- Status: ${status}\`||
+
+🔥 **Your WPM:** ***${wpm} WPM*** 🚀
+
+> _"Success is the sum of small efforts, repeated day in and day out\\."_ Keep it up\\!
 `;
