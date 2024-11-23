@@ -46,12 +46,22 @@ export const forwardText = (
 ) => `
 🚀 *Challenge Completed\\!*
 
-Hey there\\! I just completed a typing challenge with difficulty ${difficulty} in ${duration} seconds and scored ${wpm} WPM\\!
+Hey there, friend\\! 🎉 I just completed a typing challenge with the following details:
 
-Want to challenge yourself too\\? Try it out on this bot: @${botUsername}
+> *Difficulty:* ${difficulty}
+> *Duration:* ${duration} seconds
+> *WPM:* ${wpm}
 
-Good luck\\! 👾
+Want to compete with me and practice too\\? 💪 It's super fun\\!
+
+**Try it out on this bot** and challenge yourself:  
+[Click here to start\\!](https://t.me/${botUsername})
+
+**Good luck\\!** 🔥 Let's see if you can beat my score\\! 👾
+
+*Spoiler:* It's going to be tough, but I know you can do it\\! 😜
 `;
+
 
 export const gameOverCaption = (
   wpm: number,

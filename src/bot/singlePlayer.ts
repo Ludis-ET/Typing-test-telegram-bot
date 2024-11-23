@@ -259,7 +259,8 @@ export const setupCallbackQueryListener = (bot: TelegramBot) => {
 
         const { difficulty, duration, wpm } = singlePlay;
 
-        bot.sendMessage(
+        // Send a message with the challenge details and a button to join.
+        const forwardedMessage = await bot.sendMessage(
           message.chat.id,
           forwardText(difficulty, duration, wpm, botUsername),
           {
@@ -276,7 +277,29 @@ export const setupCallbackQueryListener = (bot: TelegramBot) => {
             },
           }
         );
+
+        // Provide the share link with an appropriate call to action to share with friends.
+        return bot.sendMessage(
+          message.chat.id,
+          "Click below to share this challenge with your friends! 🎉",
+          {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "Share with friends",
+                    url: `https://t.me/${botUsername}?start=${playId}`,
+                  },
+                ],
+              ],
+            },
+          }
+        );
       }
+
+
+
+
     }
   });
 };
