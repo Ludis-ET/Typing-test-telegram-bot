@@ -1,7 +1,6 @@
 import TelegramBot, { CallbackQuery } from "node-telegram-bot-api";
 import { SinglePlayerMessage } from "../messages";
-import { startTextChallenge } from "./start";
-import user from "../../db/models/user";
+import { startDurationChallenge, startTextCountChallenge } from "./start";
 
 export const gameState: {
   [key: number]: { intervalId?: NodeJS.Timeout; gameOver: boolean };
@@ -91,7 +90,7 @@ export const setupCallbackQueryListener2 = (
   } else if (["20", "40", "60", "100"].includes(data)) {
     userChoices[chatId].textCount = data;
     bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
-    startTextChallenge(
+    startTextCountChallenge(
       bot,
       chatId,
       { textCount: data },
@@ -101,7 +100,7 @@ export const setupCallbackQueryListener2 = (
     console.log("you are here 2", data)
     userChoices[chatId].duration = data;
     bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
-    startTextChallenge(
+    startDurationChallenge(
       bot,
       chatId,
       { duration: data },
