@@ -9,7 +9,7 @@ export const startTextChallenge = (
   options: { textCount?: string; duration?: string },
   difficulty: string
 ) => {
-  if (!options.textCount && !options.duration) {
+  if (options.textCount == undefined && options.duration == undefined) {
     bot.sendMessage(
       chatId,
       "❌ Either word count or duration must be provided."

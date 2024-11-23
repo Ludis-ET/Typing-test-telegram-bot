@@ -47,12 +47,11 @@ const getWordCountBasedOnDuration = (duration: string): number => {
 
 export const generateParagraph = (
   difficulty: string,
-  options: { duration?: string; wordCount?: number }
+  options: { textCount?: string; duration?: string }
 ): string => {
   const words = getWordsBasedOnDifficulty(difficulty);
-
-  if (options.wordCount) {
-    return generateRandomParagraph(words, options.wordCount);
+  if (options.textCount) {
+    return generateRandomParagraph(words, parseInt(options.textCount));
   } else if (options.duration) {
     const wordCount = getWordCountBasedOnDuration(options.duration);
     return generateRandomParagraph(words, wordCount);

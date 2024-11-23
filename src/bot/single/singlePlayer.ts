@@ -1,6 +1,7 @@
 import TelegramBot, { CallbackQuery } from "node-telegram-bot-api";
 import { SinglePlayerMessage } from "../messages";
 import { startTextChallenge } from "./start";
+import user from "../../db/models/user";
 
 export const gameState: {
   [key: number]: { intervalId?: NodeJS.Timeout; gameOver: boolean };
@@ -10,7 +11,6 @@ export const userChoices: {
 } = {};
 export const userAnswers: { [key: number]: string } = {};
 export const startTime: { [key: number]: number } = {};
-
 
 export const singlePlayerHandler = (bot: TelegramBot, chatId: number) => {
   bot.sendMessage(chatId, SinglePlayerMessage(), {
@@ -48,14 +48,13 @@ export const setupCallbackQueryListener2 = (
 
     userChoices[chatId].difficulty = data;
     bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
-
     bot.sendMessage(chatId, "🎯 Great choice\\! Choose the challenge mode:", {
       parse_mode: "MarkdownV2",
       reply_markup: {
         inline_keyboard: [
           [
-            { text: "By Word Count", callback_data: "word_count_mode" },
-            { text: "By Duration", callback_data: "duration_mode" },
+            { text: "⌨️ Word Count", callback_data: "word_count_mode" },
+            { text: "🕰 Duration", callback_data: "duration_mode" },
           ],
         ],
       },
@@ -65,10 +64,15 @@ export const setupCallbackQueryListener2 = (
       parse_mode: "MarkdownV2",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "20 words", callback_data: "20" }],
-          [{ text: "40 words", callback_data: "40" }],
-          [{ text: "60 words", callback_data: "60" }],
-          [{ text: "100 words", callback_data: "100" }],
+          [
+            { text: "20 words", callback_data: "20" },
+            { text: "40 words", callback_data: "40" },
+          ],
+          [
+            { text: "60 words", callback_data: "60" },
+            { text: "100 words", callback_data: "100" },
+          ],
+          [{ text: "🏘 Home", callback_data: "restart_game" }],
         ],
       },
     });
@@ -91,9 +95,10 @@ export const setupCallbackQueryListener2 = (
       bot,
       chatId,
       { textCount: data },
-      userChoices[chatId].difficulty
+      userChoices[chatId]?.difficulty
     );
   } else if (["15sec", "30sec", "1min", "3min"].includes(data)) {
+    console.log("you are here 2", data)
     userChoices[chatId].duration = data;
     bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
     startTextChallenge(
