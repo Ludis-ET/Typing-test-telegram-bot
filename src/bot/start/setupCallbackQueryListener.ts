@@ -16,11 +16,12 @@ export const setupCallbackQueryListener = (bot: TelegramBot) => {
       singlePlayerHandler(bot, chatId);
     } else if (data === "multiplayer") {
       bot.sendMessage(chatId, "👥 Multiplayer mode selected!");
-      // Implement logic to start the multiplayer game.
     } else if (data === "restart_game") {
+      bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
       handleHomeCallback(bot, query.message as Message);
     } else {
-      setupCallbackQueryListener2(bot);
+      setupCallbackQueryListener2(bot, query, chatId, data);
     }
   });
 };
+

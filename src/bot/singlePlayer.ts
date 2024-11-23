@@ -1,4 +1,4 @@
-import TelegramBot from "node-telegram-bot-api";
+import TelegramBot, { CallbackQuery } from "node-telegram-bot-api";
 import SinglePlay from "../db/models/singlePlay";
 import { generateParagraph } from "./utils/generateP";
 import { generateWPM } from "./utils/generateWPM";
@@ -140,111 +140,72 @@ export const singlePlayerHandler = (bot: TelegramBot, chatId: number) => {
   });
 };
 
-export const setupCallbackQueryListener2 = (bot: TelegramBot) => {
-  bot.on("callback_query", (query) => {
-    const { data, message } = query;
-    const chatId = message!.chat.id;
-    if (!data) return;
-    const handleCallbackQuery = () => {
-      if (data && ["easy", "medium", "hard", "nightmare"].includes(data)) {
-        if (!userChoices[chatId])
-          userChoices[chatId] = { difficulty: "", duration: "" };
-        userChoices[chatId].difficulty = data;
-        bot.deleteMessage(chatId, query.message!.message_id);
-        bot.sendMessage(
-          chatId,
-          "🎯 Great choice\\! Would you like the challenge by *time* or *words*\\?",
-          {
-            parse_mode: "MarkdownV2",
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  { text: "⏱ Time", callback_data: "time" },
-                  { text: "📝 Words", callback_data: "words" },
-                ],
-                [{ text: "🏘 Home", callback_data: "restart_game" }],
-              ],
-            },
-          }
-        );
-      } else if (["time", "words"].includes(data)) {
-        if (data === "time") {
-          bot.sendMessage(chatId, "Select a duration:", {
-            reply_markup: {
-              inline_keyboard: [
-                [{ text: "15 seconds ⏳", callback_data: "15sec" }],
-                [{ text: "30 seconds ⏳", callback_data: "30sec" }],
-                [{ text: "1 minute ⏰", callback_data: "1min" }],
-                [{ text: "3 minutes ⏰", callback_data: "3min" }],
-              ],
-            },
-          });
-        } else {
-          bot.sendMessage(chatId, "Select the number of words:", {
-            reply_markup: {
-              inline_keyboard: [
-                [{ text: "20 words", callback_data: "20" }],
-                [{ text: "40 words", callback_data: "40" }],
-                [{ text: "60 words", callback_data: "60" }],
-                [{ text: "100 words", callback_data: "100" }],
-              ],
-            },
-          });
-        }
-      } else if (["15sec", "30sec", "1min", "3min"].includes(data)) {
-        const handleDurationSelection =
-          (bot: TelegramBot) => (query: TelegramBot.CallbackQuery) => {
-            const chatId = query.message!.chat.id;
-            userChoices[chatId].duration = query.data!;
-            bot
-              .deleteMessage(chatId, query.message!.message_id)
-              .catch(() => {});
-            const paragraph = generateParagraph(
-              userChoices[chatId].difficulty,
-              userChoices[chatId].duration
-            );
-            bot.sendMessage(chatId, paragraph, {
-              protect_content: true,
-              disable_web_page_preview: true,
-            });
-            userAnswers[chatId] = paragraph;
-            startTime[chatId] = new Date().getTime();
-            startCountdown(bot, chatId, userChoices[chatId].duration);
-          };
-        handleDurationSelection(bot)(query);
-      } else if (["20", "40", "60", "100"].includes(data)) {
-        const handleWordSelection =
-          (bot: TelegramBot) => (query: TelegramBot.CallbackQuery) => {
-            const chatId = query.message!.chat.id;
-            userChoices[chatId].duration = query.data!;
-            bot
-              .deleteMessage(chatId, query.message!.message_id)
-              .catch(() => {});
-            const paragraph = generateParagraph(
-              userChoices[chatId].difficulty,
-              userChoices[chatId].duration
-            );
-            bot.sendMessage(chatId, paragraph, {
-              protect_content: true,
-              disable_web_page_preview: true,
-            });
-            userAnswers[chatId] = paragraph;
-            startTime[chatId] = new Date().getTime();
-            startCountdown(bot, chatId, userChoices[chatId].duration);
-          };
-        handleWordSelection(bot)(query);
-      } else if (data === "restart_game") {
-        if (gameState[chatId]?.intervalId)
-          clearInterval(gameState[chatId].intervalId);
-        gameState[chatId] = { intervalId: undefined, gameOver: false };
+export const setupCallbackQueryListener2 = (
+  bot: TelegramBot,
+  query: CallbackQuery,
+  chatId: number,
+  data: string
+) => {
+  if (!data) return;
+  if (["easy", "medium", "hard", "nightmare"].includes(data)) {
+    if (!userChoices[chatId])
+      userChoices[chatId] = { difficulty: "", duration: "" };
+
+    userChoices[chatId].difficulty = data;
+    bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
+
+    bot.sendMessage(
+      chatId,
+      "🎯 Great choice\\! Would you like the challenge by *time* or *words*\\?",
+      {
+        parse_mode: "MarkdownV2",
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: "⏱ Time", callback_data: "time" },
+              { text: "📝 Words", callback_data: "words" },
+            ],
+            [{ text: "🏘 Home", callback_data: "restart_game" }],
+          ],
+        },
+      }
+    );
+  } else if (["time", "words"].includes(data)) {
+    bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
+
+    if (data === "time") {
+      bot.sendMessage(chatId, "Select a duration:", {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: "15 seconds ⏳", callback_data: "15sec" }],
+            [{ text: "30 seconds ⏳", callback_data: "30sec" }],
+            [{ text: "1 minute ⏰", callback_data: "1min" }],
+            [{ text: "3 minutes ⏰", callback_data: "3min" }],
+          ],
+        },
+      });
+    } else {
+      bot.sendMessage(chatId, "Select the number of words:", {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: "20 words", callback_data: "20" }],
+            [{ text: "40 words", callback_data: "40" }],
+            [{ text: "60 words", callback_data: "60" }],
+            [{ text: "100 words", callback_data: "100" }],
+          ],
+        },
+      });
+    }
+  } else if (["15sec", "30sec", "1min", "3min"].includes(data)) {
+    const handleDurationSelection =
+      (bot: TelegramBot) => (query: TelegramBot.CallbackQuery) => {
+        const chatId = query.message!.chat.id;
+        userChoices[chatId].duration = query.data!;
         bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
         const paragraph = generateParagraph(
           userChoices[chatId].difficulty,
           userChoices[chatId].duration
         );
-        bot.sendMessage(chatId, "_🔄 Restarting the game..._", {
-          parse_mode: "MarkdownV2",
-        });
         bot.sendMessage(chatId, paragraph, {
           protect_content: true,
           disable_web_page_preview: true,
@@ -252,8 +213,45 @@ export const setupCallbackQueryListener2 = (bot: TelegramBot) => {
         userAnswers[chatId] = paragraph;
         startTime[chatId] = new Date().getTime();
         startCountdown(bot, chatId, userChoices[chatId].duration);
-      }
-    };
-    handleCallbackQuery();
-  });
+      };
+    handleDurationSelection(bot)(query);
+  } else if (["20", "40", "60", "100"].includes(data)) {
+    const handleWordSelection =
+      (bot: TelegramBot) => (query: TelegramBot.CallbackQuery) => {
+        const chatId = query.message!.chat.id;
+        userChoices[chatId].duration = query.data!;
+        bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
+        const paragraph = generateParagraph(
+          userChoices[chatId].difficulty,
+          userChoices[chatId].duration
+        );
+        bot.sendMessage(chatId, paragraph, {
+          protect_content: true,
+          disable_web_page_preview: true,
+        });
+        userAnswers[chatId] = paragraph;
+        startTime[chatId] = new Date().getTime();
+        startCountdown(bot, chatId, userChoices[chatId].duration);
+      };
+    handleWordSelection(bot)(query);
+  } else if (data === "restart_game") {
+    if (gameState[chatId]?.intervalId)
+      clearInterval(gameState[chatId].intervalId);
+    gameState[chatId] = { intervalId: undefined, gameOver: false };
+    bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
+    const paragraph = generateParagraph(
+      userChoices[chatId].difficulty,
+      userChoices[chatId].duration
+    );
+    bot.sendMessage(chatId, "_🔄 Restarting the game..._", {
+      parse_mode: "MarkdownV2",
+    });
+    bot.sendMessage(chatId, paragraph, {
+      protect_content: true,
+      disable_web_page_preview: true,
+    });
+    userAnswers[chatId] = paragraph;
+    startTime[chatId] = new Date().getTime();
+    startCountdown(bot, chatId, userChoices[chatId].duration);
+  }
 };
