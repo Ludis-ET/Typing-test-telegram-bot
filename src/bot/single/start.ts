@@ -19,7 +19,7 @@ export const startTextCountChallenge = (
     disable_web_page_preview: true,
   });
 
-  userAnswers[chatId] = paragraph;
+  userAnswers[chatId] = "";
   startTime[chatId] = new Date().getTime();
   gameState[chatId] = { intervalId: undefined, gameOver: false };
 
@@ -54,9 +54,8 @@ export const startTextCountChallenge = (
         .catch(() => {});
     }
 
-    // Count words typed by the user
     if (userAnswers[chatId]) {
-      typedWordsCount = userAnswers[chatId].split(" ").length;
+      typedWordsCount = userAnswers[chatId].length;
       if (typedWordsCount >= wordCount) {
         clearInterval(intervalId);
         bot.sendMessage(chatId, "✅ You completed the challenge! Game over.");
@@ -67,7 +66,6 @@ export const startTextCountChallenge = (
 
   gameState[chatId].intervalId = intervalId;
 
-  // Listen for when the user sends a message
   bot.once("message", (msg) => {
     if (msg.chat.id === chatId && msg.text) {
       const typedMessage = msg.text.trim();
@@ -82,7 +80,7 @@ export const startTextCountChallenge = (
           chatId,
           difficulty,
           options,
-          userAnswers[chatId],
+          paragraph,
           typedMessage,
           timeSpent
         );

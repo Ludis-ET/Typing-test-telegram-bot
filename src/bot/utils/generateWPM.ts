@@ -68,8 +68,8 @@ export const generateWPM = async (
   const duration = options.duration ? parseInt(options.duration) : 0;
 
   const wpm = calculateWPM(
-    generatedText,
     promptText,
+    generatedText,
     timeTaken,
     difficulty,
     duration

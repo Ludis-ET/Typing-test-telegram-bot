@@ -1,6 +1,7 @@
-import TelegramBot, { CallbackQuery } from "node-telegram-bot-api";
+import TelegramBot, { CallbackQuery, Message } from "node-telegram-bot-api";
 import { SinglePlayerMessage } from "../messages";
 import { startDurationChallenge, startTextCountChallenge } from "./start";
+import { handleHomeCallback } from "../start/handleStart";
 
 export const gameState: {
   [key: number]: { intervalId?: NodeJS.Timeout; gameOver: boolean };
@@ -59,31 +60,38 @@ export const setupCallbackQueryListener2 = (
       },
     });
   } else if (data === "word_count_mode") {
+    bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
     bot.sendMessage(chatId, "🔢 Select the number of words:", {
       parse_mode: "MarkdownV2",
       reply_markup: {
         inline_keyboard: [
           [
-            { text: "20 words", callback_data: "20" },
-            { text: "40 words", callback_data: "40" },
+            { text: "20 words 📝", callback_data: "20" },
+            { text: "40 words 📝", callback_data: "40" },
           ],
           [
-            { text: "60 words", callback_data: "60" },
-            { text: "100 words", callback_data: "100" },
+            { text: "60 words 📝", callback_data: "60" },
+            { text: "100 words 📝", callback_data: "100" },
           ],
-          [{ text: "🏘 Home", callback_data: "restart_game" }],
+          [{ text: "🏠 Home", callback_data: "restart_game" }],
         ],
       },
     });
   } else if (data === "duration_mode") {
+    bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
     bot.sendMessage(chatId, "⏱ Select the challenge duration:", {
       parse_mode: "MarkdownV2",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "15 seconds", callback_data: "15sec" }],
-          [{ text: "30 seconds", callback_data: "30sec" }],
-          [{ text: "1 minute", callback_data: "1min" }],
-          [{ text: "3 minutes", callback_data: "3min" }],
+          [
+            { text: "15 seconds ⏱️", callback_data: "15sec" },
+            { text: "30 seconds ⏱️", callback_data: "30sec" },
+          ],
+          [
+            { text: "1 minute 🕐", callback_data: "1min" },
+            { text: "3 minutes 🕒", callback_data: "3min" },
+          ],
+          [{ text: "🏠 Home", callback_data: "restart_game" }],
         ],
       },
     });
@@ -97,7 +105,6 @@ export const setupCallbackQueryListener2 = (
       userChoices[chatId]?.difficulty
     );
   } else if (["15sec", "30sec", "1min", "3min"].includes(data)) {
-    console.log("you are here 2", data)
     userChoices[chatId].duration = data;
     bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
     startDurationChallenge(
@@ -112,5 +119,6 @@ export const setupCallbackQueryListener2 = (
     gameState[chatId] = { intervalId: undefined, gameOver: true };
     bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
     bot.sendMessage(chatId, "⏹ Challenge stopped. Try again later.");
+    (msg: Message) => handleHomeCallback(bot, msg);
   }
 };
