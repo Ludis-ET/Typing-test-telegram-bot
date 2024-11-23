@@ -1,13 +1,12 @@
 import TelegramBot from "node-telegram-bot-api";
 import SinglePlay from "../../db/models/singlePlay";
-import { bot } from "../bot";
 import { gameOverCaption } from "../messages";
 
 export const generateWPM = async (
   bot: TelegramBot,
   chatId: number,
   difficulty: string,
-  duration: string,
+  options: { textCount?: string; duration?: string },
   generatedText: string,
   promptText: string,
   timeTaken: number
@@ -66,12 +65,14 @@ export const generateWPM = async (
       : "0";
   };
 
+  const duration = options.duration ? parseInt(options.duration) : 0;
+
   const wpm = calculateWPM(
     generatedText,
     promptText,
     timeTaken,
     difficulty,
-    parseInt(duration)
+    duration
   );
   const missedChars = calculateMissedChars(generatedText, promptText);
   const newChars = calculateNewChars(generatedText, promptText);
@@ -79,29 +80,11 @@ export const generateWPM = async (
     calculateAccuracy(generatedText, promptText)
   );
   const accuracy = isNaN(accuracyValue) ? 0 : accuracyValue;
+
   const status =
-    timeTaken > parseInt(duration)
+    timeTaken > duration
       ? "You took longer than expected!"
       : "You finished within the expected time!";
-
-  // const singlePlayData = new SinglePlay({
-  //   chatId,
-  //   difficulty,
-  //   duration: parseInt(duration),
-  //   timeTaken,
-  //   wpm,
-  //   accuracy,
-  //   missedChars,
-  //   newChars,
-  //   status,
-  // });
-  // await singlePlayData.save();
-
-  const replyKeyboard = {
-    keyboard: [[{ text: "🎮 Single Player" }, { text: "👥 Multiplayer" }]],
-    resize_keyboard: true,
-    one_time_keyboard: false,
-  };
 
   bot.sendPhoto(
     chatId,
@@ -115,13 +98,9 @@ export const generateWPM = async (
         status,
         timeTaken,
         difficulty,
-        duration
+        options.duration || "N/A"
       ),
       parse_mode: "MarkdownV2",
     }
   );
-
-  bot.sendMessage(chatId, "Choose your next mode:", {
-    reply_markup: replyKeyboard,
-  });
 };

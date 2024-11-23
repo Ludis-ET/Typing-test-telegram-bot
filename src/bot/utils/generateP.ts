@@ -19,18 +19,14 @@ const getWordsBasedOnDifficulty = (difficulty: string): string[] => {
 };
 
 const generateRandomParagraph = (
-  difficulty: string,
-  duration: string
+  words: string[],
+  wordCount: number
 ): string => {
-  const words = getWordsBasedOnDifficulty(difficulty);
   let paragraph = "";
-  const wordCount = getWordCountBasedOnDuration(duration);
-
   for (let i = 0; i < wordCount; i++) {
     const randomWord = words[Math.floor(Math.random() * words.length)];
     paragraph += randomWord + " ";
   }
-
   return paragraph.trim();
 };
 
@@ -51,7 +47,16 @@ const getWordCountBasedOnDuration = (duration: string): number => {
 
 export const generateParagraph = (
   difficulty: string,
-  duration: string
+  options: { duration?: string; wordCount?: number }
 ): string => {
-  return generateRandomParagraph(difficulty, duration);
+  const words = getWordsBasedOnDifficulty(difficulty);
+
+  if (options.wordCount) {
+    return generateRandomParagraph(words, options.wordCount);
+  } else if (options.duration) {
+    const wordCount = getWordCountBasedOnDuration(options.duration);
+    return generateRandomParagraph(words, wordCount);
+  } else {
+    throw new Error("Either wordCount or duration must be provided.");
+  }
 };

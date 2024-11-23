@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { singlePlayerHandler } from "./singlePlayer";
+import { singlePlayerHandler } from "./single/singlePlayer";
 import { multiplayerHandler } from "./multiplayer";
 
 export const handleMessage = (
@@ -15,6 +15,5 @@ export const handleMessage = (
     case "👥 Multiplayer":
       multiplayerHandler(bot, chatId);
       break;
-
   }
 };

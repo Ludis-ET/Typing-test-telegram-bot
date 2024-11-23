@@ -2,7 +2,7 @@ import TelegramBot, { Message } from "node-telegram-bot-api";
 import {
   setupCallbackQueryListener2,
   singlePlayerHandler,
-} from "../singlePlayer";
+} from "../single/singlePlayer";
 import { handleHomeCallback } from "./handleStart";
 
 export const setupCallbackQueryListener = (bot: TelegramBot) => {
@@ -24,4 +24,3 @@ export const setupCallbackQueryListener = (bot: TelegramBot) => {
     }
   });
 };
-
