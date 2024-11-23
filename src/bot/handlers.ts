@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { singlePlayerHandler } from "./singleplayer";
+import { singlePlayerHandler } from "./singlePlayer";
 import { multiplayerHandler } from "./multiplayer";
 
 export const handleMessage = (
