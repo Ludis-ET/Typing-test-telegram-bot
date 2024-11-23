@@ -71,7 +71,7 @@ export const gameOverCaption = (
   newChars: number,
   timeTaken: number,
   difficulty: string,
-  duration: string
+  duration: number
 ): string => `
 🎉 *Congratulations\\!*
 > _You've just completed the challenge\\!_

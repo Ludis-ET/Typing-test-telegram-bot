@@ -188,9 +188,6 @@ export const startDurationChallenge = (
         if (typedMessage === userAnswers[chatId]) {
           gameState[chatId].gameOver = true;
           bot.sendMessage(chatId, "✅ You completed the challenge! Game over.");
-        } else {
-          gameState[chatId].gameOver = true;
-          bot.sendMessage(chatId, "❌ Challenge over. Try again!");
         }
       }
     }

@@ -2,6 +2,21 @@ import TelegramBot from "node-telegram-bot-api";
 import SinglePlay from "../../db/models/singlePlay";
 import { gameOverCaption } from "../messages";
 
+const getDutation = (duration: string) => {
+  switch (duration) {
+    case "15sec":
+      return 15;
+    case "30sec":
+      return 30;
+    case "1min":
+      return 60;
+    case "3min":
+      return 180;
+    default:
+      return 0;
+  }
+};
+
 export const generateWPM = async (
   bot: TelegramBot,
   chatId: number,
@@ -25,7 +40,7 @@ export const generateWPM = async (
     const totalChars = promptText.length;
     const accuracy = totalChars > 0 ? correctChars / totalChars : 0;
 
-    const rawWPM = correctChars / 5 / (timeTaken / 60);
+    const rawWPM = typedText.split(" ").length / (timeTaken / 60);
 
     const difficultyMultiplier =
       {
@@ -82,6 +97,7 @@ export const generateWPM = async (
     difficulty,
     duration
   );
+
   const missedChars = calculateMissedChars(generatedText, promptText);
   const newChars = calculateNewChars(generatedText, promptText);
   const accuracyValue = parseFloat(
@@ -89,11 +105,7 @@ export const generateWPM = async (
   );
   const accuracy = isNaN(accuracyValue) ? 0 : accuracyValue;
 
-  const status =
-    timeTaken > duration
-      ? "You took longer than expected!"
-      : "You finished within the expected time!";
-
+  
   bot.sendPhoto(
     chatId,
     "https://i.ibb.co/4j2wHQH/IMG-20241122-200539-983.jpg",
@@ -106,9 +118,16 @@ export const generateWPM = async (
         newChars,
         timeTaken,
         difficulty,
-        options.duration || "N/A"
+        getDutation(options.duration as string) || 0
       ),
       parse_mode: "MarkdownV2",
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "🔄 Restart Game", callback_data: "restart_game" }],
+          [{ text: "🏘 Home", callback_data: "go_home" }],
+        ],
+      },
     }
   );
+
 };
