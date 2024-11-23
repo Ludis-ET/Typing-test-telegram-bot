@@ -17,7 +17,7 @@ export const generateWPM = async (
     timeTaken: number,
     difficulty: string,
     duration: number
-  ) => {
+  ): [number, number] => {
     const correctChars = typedText
       .split("")
       .filter((char, index) => char === promptText[index]).length;
@@ -25,18 +25,23 @@ export const generateWPM = async (
     const totalChars = promptText.length;
     const accuracy = totalChars > 0 ? correctChars / totalChars : 0;
 
-    const baseWPM = correctChars / 5 / (timeTaken / 60);
+    const rawWPM = correctChars / 5 / (timeTaken / 60);
 
     const difficultyMultiplier =
       {
         easy: 1,
         medium: 1.2,
         hard: 1.5,
+        nightmare: 2,
       }[difficulty.toLowerCase()] || 1;
 
     const timeFactor = timeTaken <= duration ? 1 : duration / timeTaken;
 
-    return Math.round(baseWPM * difficultyMultiplier * timeFactor * accuracy);
+    const realWPM = Math.round(
+      rawWPM * difficultyMultiplier * timeFactor * accuracy
+    );
+
+    return [Math.round(rawWPM), realWPM];
   };
 
   const calculateMissedChars = (generated: string, prompt: string) => {
@@ -50,9 +55,12 @@ export const generateWPM = async (
   };
 
   const calculateNewChars = (generated: string, prompt: string) => {
-    return generated.length > prompt.length
-      ? generated.length - prompt.length
-      : 0;
+    let newC = 0;
+    const length = Math.min(generated.length, prompt.length);
+    for (let i = 0; i < length; i++) {
+      if (generated[i] !== prompt[i]) newC++;
+    }
+    return newC;
   };
 
   const calculateAccuracy = (generated: string, prompt: string) => {
@@ -91,11 +99,11 @@ export const generateWPM = async (
     "https://i.ibb.co/4j2wHQH/IMG-20241122-200539-983.jpg",
     {
       caption: gameOverCaption(
-        wpm,
+        wpm[0],
+        wpm[1],
         accuracy,
         missedChars,
         newChars,
-        status,
         timeTaken,
         difficulty,
         options.duration || "N/A"

@@ -64,11 +64,11 @@ Want to compete with me and practice too\\? 💪 It's super fun\\!
 
 
 export const gameOverCaption = (
+  raw: number,
   wpm: number,
   accuracy: number,
   missedChars: number,
   newChars: number,
-  status: string,
   timeTaken: number,
   difficulty: string,
   duration: string
@@ -84,7 +84,7 @@ export const gameOverCaption = (
 - Accuracy: ${accuracy}%
 - New Characters Typed: ${newChars}
 - WPM: ${wpm} WPM
-- Status: ${status}\`||
+- Raw wpm: ${raw}\`||
 
 🔥 **Your WPM:** ***${wpm} WPM*** 🚀
 
