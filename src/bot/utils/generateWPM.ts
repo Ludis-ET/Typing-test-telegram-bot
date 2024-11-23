@@ -78,6 +78,11 @@ export const generateWPM = async (
     ],
   ];
 
+  const replyKeyboard = {
+    keyboard: [[{ text: "🎮 Single Player" }, { text: "👥 Multiplayer" }]],
+    resize_keyboard: true,
+    one_time_keyboard: false,
+  };
 
   bot.sendPhoto(
     chatId,
@@ -100,4 +105,7 @@ export const generateWPM = async (
     }
   );
 
+  bot.sendMessage(chatId, "Choose your next mode:", {
+    reply_markup: replyKeyboard,
+  });
 };

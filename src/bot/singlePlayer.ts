@@ -37,7 +37,6 @@ const startCountdown = (bot: TelegramBot, chatId: number, duration: string) => {
 
   let messageId: number | undefined;
   gameState[chatId] = { intervalId: undefined, gameOver: false };
-  timeRemaining -= 5;
 
   const intervalId = setInterval(() => {
     if (timeRemaining <= 0) {
@@ -65,7 +64,7 @@ const startCountdown = (bot: TelegramBot, chatId: number, duration: string) => {
     } else {
       if (!messageId) {
         bot
-          .sendMessage(chatId, `⏰ ${timeRemaining} seconds left...`, {
+          .sendMessage(chatId, `⏰ ${timeRemaining} seconds left...(send it before the timer ends)`, {
             reply_markup: {
               inline_keyboard: [
                 [{ text: "🔄 Restart", callback_data: "restart_game" }],
@@ -78,7 +77,7 @@ const startCountdown = (bot: TelegramBot, chatId: number, duration: string) => {
           .catch(() => {});
       } else {
         bot
-          .editMessageText(`⏰ ${timeRemaining} seconds left...`, {
+          .editMessageText(`⏰ ${timeRemaining} seconds left...(send it before the timer ends)`, {
             chat_id: chatId,
             message_id: messageId,
             reply_markup: {
@@ -90,9 +89,9 @@ const startCountdown = (bot: TelegramBot, chatId: number, duration: string) => {
           .catch(() => {});
       }
 
-      timeRemaining -= 5;
+      timeRemaining -= 1;
     }
-  }, 5000);
+  }, 1000);
 
   gameState[chatId].intervalId = intervalId;
 
