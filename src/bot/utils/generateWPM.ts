@@ -52,9 +52,7 @@ export const generateWPM = async (
 
     const timeFactor = timeTaken <= duration ? 1 : duration / timeTaken;
 
-    const realWPM = Math.round(
-      rawWPM * difficultyMultiplier * timeFactor * accuracy
-    );
+    const realWPM = Math.round(rawWPM * difficultyMultiplier * timeFactor * accuracy);
 
     return [Math.round(rawWPM), realWPM];
   };
