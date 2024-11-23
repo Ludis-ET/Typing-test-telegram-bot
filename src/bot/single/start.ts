@@ -121,6 +121,18 @@ export const startDurationChallenge = (
       clearInterval(intervalId);
       bot.sendMessage(chatId, "❌ Challenge over. Time's up!");
       gameState[chatId].gameOver = true;
+
+      const endTime = new Date().getTime();
+      const timeSpent = (endTime - startTime[chatId]) / 1000;
+      generateWPM(
+        bot,
+        chatId,
+        difficulty,
+        options,
+        userAnswers[chatId],
+        "",
+        timeSpent
+      );
     } else {
       const timerMessage = `⏱ Time remaining: ${remainingTime} seconds. Type the paragraph and send it!`;
 
@@ -155,7 +167,6 @@ export const startDurationChallenge = (
 
   gameState[chatId].intervalId = intervalId;
 
-  // Listen for when the user sends a message
   bot.once("message", (msg) => {
     if (msg.chat.id === chatId && msg.text) {
       const typedMessage = msg.text.trim();
