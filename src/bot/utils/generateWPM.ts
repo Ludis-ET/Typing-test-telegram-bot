@@ -12,10 +12,32 @@ export const generateWPM = async (
   promptText: string,
   timeTaken: number
 ) => {
-  const calculateWPM = (typedText: string, timeTaken: number) => {
-    const typedWords = typedText.split(/\s+/).length;
-    const timeInMinutes = timeTaken / 60;
-    return timeInMinutes > 0 ? Math.round(typedWords / timeInMinutes) : 0;
+  const calculateWPM = (
+    typedText: string,
+    promptText: string,
+    timeTaken: number,
+    difficulty: string,
+    duration: number
+  ) => {
+    const correctChars = typedText
+      .split("")
+      .filter((char, index) => char === promptText[index]).length;
+
+    const totalChars = promptText.length;
+    const accuracy = totalChars > 0 ? correctChars / totalChars : 0;
+
+    const baseWPM = correctChars / 5 / (timeTaken / 60);
+
+    const difficultyMultiplier =
+      {
+        easy: 1,
+        medium: 1.2,
+        hard: 1.5,
+      }[difficulty.toLowerCase()] || 1;
+
+    const timeFactor = timeTaken <= duration ? 1 : duration / timeTaken;
+
+    return Math.round(baseWPM * difficultyMultiplier * timeFactor * accuracy);
   };
 
   const calculateMissedChars = (generated: string, prompt: string) => {
@@ -44,7 +66,13 @@ export const generateWPM = async (
       : "0";
   };
 
-  const wpm = calculateWPM(generatedText, timeTaken);
+  const wpm = calculateWPM(
+    generatedText,
+    promptText,
+    timeTaken,
+    difficulty,
+    parseInt(duration)
+  );
   const missedChars = calculateMissedChars(generatedText, promptText);
   const newChars = calculateNewChars(generatedText, promptText);
   const accuracyValue = parseFloat(
@@ -56,27 +84,18 @@ export const generateWPM = async (
       ? "You took longer than expected!"
       : "You finished within the expected time!";
 
-  const singlePlayData = new SinglePlay({
-    chatId,
-    difficulty,
-    duration: parseInt(duration),
-    timeTaken,
-    wpm,
-    accuracy,
-    missedChars,
-    newChars,
-    status,
-  });
-  await singlePlayData.save();
-
-  const inlineKeyboard = [
-    [
-      {
-        text: "📤 Share with a Friend",
-        callback_data: `share_${singlePlayData._id}`,
-      },
-    ],
-  ];
+  // const singlePlayData = new SinglePlay({
+  //   chatId,
+  //   difficulty,
+  //   duration: parseInt(duration),
+  //   timeTaken,
+  //   wpm,
+  //   accuracy,
+  //   missedChars,
+  //   newChars,
+  //   status,
+  // });
+  // await singlePlayData.save();
 
   const replyKeyboard = {
     keyboard: [[{ text: "🎮 Single Player" }, { text: "👥 Multiplayer" }]],
@@ -99,9 +118,6 @@ export const generateWPM = async (
         duration
       ),
       parse_mode: "MarkdownV2",
-      // reply_markup: {
-      //   inline_keyboard: inlineKeyboard,
-      // },
     }
   );
 
