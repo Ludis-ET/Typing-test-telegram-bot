@@ -26,7 +26,7 @@ export const handleStart = (bot: TelegramBot) => async (msg: Message) => {
       reply_markup: {
         keyboard: [[{ text: "🎮 Single Player" }, { text: "👥 Multiplayer" }]],
         resize_keyboard: true,
-        one_time_keyboard: true,
+        one_time_keyboard: false,
       },
     }
   );

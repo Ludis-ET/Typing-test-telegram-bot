@@ -258,9 +258,9 @@ export const setupCallbackQueryListener = (bot: TelegramBot) => {
         }
 
         const { difficulty, duration, wpm } = singlePlay;
+        const referralLink = `https://t.me/${botUsername}?start=${playId}`;
 
-        // Send a message with the challenge details and a button to join.
-        const forwardedMessage = await bot.sendMessage(
+        await bot.sendMessage(
           message.chat.id,
           forwardText(difficulty, duration, wpm, botUsername),
           {
@@ -269,37 +269,28 @@ export const setupCallbackQueryListener = (bot: TelegramBot) => {
               inline_keyboard: [
                 [
                   {
-                    text: "Join the Challenge!",
-                    url: `https://t.me/${botUsername}?start=${playId}`,
+                    text: "Invite Friends",
+                    callback_data: `invite_${playId}`,
                   },
                 ],
               ],
             },
           }
         );
+      } else if (data && data.startsWith("invite_")) {
+        const playId = data.split("_")[1];
+        const referralLink = `https://t.me/${botUsername}?start=${playId}`;
 
-        // Provide the share link with an appropriate call to action to share with friends.
-        return bot.sendMessage(
+        await bot.sendMessage(
           message.chat.id,
-          "Click below to share this challenge with your friends! 🎉",
-          {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: "Share with friends",
-                    url: `https://t.me/${botUsername}?start=${playId}`,
-                  },
-                ],
-              ],
-            },
-          }
+          `Share this link with your friends: ${referralLink}`
+        );
+
+        await bot.sendMessage(
+          message.chat.id,
+          "You can now forward this message to your contacts using the 'Forward' option in Telegram. Choose the contacts to invite to the challenge!"
         );
       }
-
-
-
-
     }
   });
 };

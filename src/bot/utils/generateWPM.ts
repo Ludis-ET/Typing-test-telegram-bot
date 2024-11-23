@@ -78,11 +78,6 @@ export const generateWPM = async (
     ],
   ];
 
-  const replyKeyboard = {
-    keyboard: [[{ text: "Single Player" }, { text: "Multiplayer" }]],
-    resize_keyboard: true,
-    one_time_keyboard: true,
-  };
 
   bot.sendPhoto(
     chatId,
@@ -99,13 +94,10 @@ export const generateWPM = async (
         duration
       ),
       parse_mode: "MarkdownV2",
-      reply_markup: {
-        inline_keyboard: inlineKeyboard,
-      },
+      // reply_markup: {
+      //   inline_keyboard: inlineKeyboard,
+      // },
     }
   );
 
-  bot.sendMessage(chatId, "Choose your next mode:", {
-    reply_markup: replyKeyboard,
-  });
 };
