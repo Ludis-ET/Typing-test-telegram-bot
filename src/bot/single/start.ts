@@ -12,7 +12,7 @@ const addNewLines = (text: string, wordsPerLine: number) => {
     .join(" ");
 };
 
-export const startTextCountChallenge = (
+export const startTextCountChallenge = async (
   bot: TelegramBot,
   chatId: number,
   options: { textCount: string },
@@ -22,8 +22,30 @@ export const startTextCountChallenge = (
   let typedWordsCount = 0;
   let messageId: number | undefined;
 
+  const sentMessage = await bot.sendMessage(chatId, "Starting in... 3", {
+    protect_content: true,
+  });
+
+  for (let i = 2; i >= 0; i--) {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (i === 0) {
+      await bot.editMessageText("Go!", {
+        chat_id: chatId,
+        message_id: sentMessage.message_id,
+      });
+    } else {
+      await bot.editMessageText(`Starting in... ${i}`, {
+        chat_id: chatId,
+        message_id: sentMessage.message_id,
+      });
+    }
+  }
+
+
+
   const paragraph = generateParagraph(difficulty, options);
   const formattedParagraph = addNewLines(paragraph, 20);
+
   bot.sendMessage(chatId, formattedParagraph, {
     protect_content: true,
     disable_web_page_preview: true,
