@@ -25,7 +25,7 @@ export const singlePlayerHandler = (bot: TelegramBot, chatId: number) => {
           { text: "🔴 Hard", callback_data: "hard" },
           { text: "🔥 Nightmare", callback_data: "nightmare" },
         ],
-        [{ text: "🏘 Home", callback_data: "restart_game" }],
+        [{ text: "🏘 Home", callback_data: "home" }],
       ],
     },
   });
@@ -38,6 +38,7 @@ export const setupCallbackQueryListener2 = (
   data: string
 ) => {
   if (!data) return;
+
   if (["easy", "medium", "hard", "nightmare"].includes(data)) {
     if (!userChoices[chatId])
       userChoices[chatId] = {
@@ -73,7 +74,7 @@ export const setupCallbackQueryListener2 = (
             { text: "60 words 📝", callback_data: "60" },
             { text: "100 words 📝", callback_data: "100" },
           ],
-          [{ text: "🏠 Home", callback_data: "restart_game" }],
+          [{ text: "🏠 Home", callback_data: "home" }],
         ],
       },
     });
@@ -91,7 +92,7 @@ export const setupCallbackQueryListener2 = (
             { text: "1 minute 🕐", callback_data: "1min" },
             { text: "3 minutes 🕒", callback_data: "3min" },
           ],
-          [{ text: "🏠 Home", callback_data: "restart_game" }],
+          [{ text: "🏠 Home", callback_data: "home" }],
         ],
       },
     });
@@ -102,7 +103,7 @@ export const setupCallbackQueryListener2 = (
       bot,
       chatId,
       { textCount: data },
-      userChoices[chatId]?.difficulty
+      userChoices[chatId].difficulty
     );
   } else if (["15sec", "30sec", "1min", "3min"].includes(data)) {
     userChoices[chatId].duration = data;
@@ -117,8 +118,42 @@ export const setupCallbackQueryListener2 = (
     if (gameState[chatId]?.intervalId)
       clearInterval(gameState[chatId].intervalId);
     gameState[chatId] = { intervalId: undefined, gameOver: true };
+
+    const userChoice = userChoices[chatId];
     bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
-    bot.sendMessage(chatId, "⏹ Challenge stopped. Try again later.");
-    (msg: Message) => handleHomeCallback(bot, msg);
+    bot.sendMessage(
+      chatId,
+      "⏹ Challenge stopped\\. What would you like to do next\\?",
+      {
+        parse_mode: "MarkdownV2",
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: "🔄 Restart", callback_data: "restart_challenge" },
+              { text: "🏘 Home", callback_data: "restart_game" },
+            ],
+          ],
+        },
+      }
+    );
+  } else if (data === "restart_challenge") {
+    const userChoice = userChoices[chatId];
+    bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
+
+    if (userChoice.textCount) {
+      startTextCountChallenge(
+        bot,
+        chatId,
+        { textCount: userChoice.textCount },
+        userChoice.difficulty
+      );
+    } else if (userChoice.duration) {
+      startDurationChallenge(
+        bot,
+        chatId,
+        { duration: userChoice.duration },
+        userChoice.difficulty
+      );
+    }
   }
 };

@@ -26,36 +26,54 @@ export const generateWPM = async (
   promptText: string,
   timeTaken: number
 ) => {
-  const calculateWPM = (
-    typedText: string,
-    promptText: string,
-    timeTaken: number,
-    difficulty: string,
-    duration: number
-  ): [number, number] => {
-    const correctChars = typedText
-      .split("")
-      .filter((char, index) => char === promptText[index]).length;
+ const calculateWPM = (
+   typedText: string,
+   promptText: string,
+   timeTaken: number,
+   difficulty: string,
+   duration: number
+ ): [number, number] => {
+   const normalizeText = (text: string) =>
+     text.replace(/\s+/g, " ").trim().split(" ");
 
-    const totalChars = promptText.length;
-    const accuracy = totalChars > 0 ? correctChars / totalChars : 0;
+   const typedWords = normalizeText(typedText);
+   const promptWords = normalizeText(promptText);
 
-    const rawWPM = typedText.split(" ").length / (timeTaken / 60);
+   let correctChars = 0;
+   let totalChars = 0;
 
-    const difficultyMultiplier =
-      {
-        easy: 1,
-        medium: 1.2,
-        hard: 1.5,
-        nightmare: 2,
-      }[difficulty.toLowerCase()] || 1;
+   promptWords.forEach((word, index) => {
+     const typedWord = typedWords[index] || "";
+     const minLength = Math.min(word.length, typedWord.length);
 
-    const timeFactor = timeTaken <= duration ? 1 : duration / timeTaken;
+     for (let i = 0; i < minLength; i++) {
+       if (word[i] === typedWord[i]) {
+         correctChars++;
+       }
+     }
+     totalChars += word.length;
+   });
 
-    const realWPM = Math.round(rawWPM * difficultyMultiplier * timeFactor * accuracy);
+   const accuracy = totalChars > 0 ? correctChars / totalChars : 0;
+   const rawWPM =
+     typedText.replace(/\s+/g, " ").trim().split(" ").length / (timeTaken / 60);
 
-    return [Math.round(rawWPM), realWPM];
-  };
+   const difficultyMultiplier =
+     {
+       easy: 1,
+       medium: 1.2,
+       hard: 1.5,
+       nightmare: 2,
+     }[difficulty.toLowerCase()] || 1;
+
+   const timeFactor = timeTaken <= duration ? 1 : duration / timeTaken;
+   const realWPM = Math.round(
+     rawWPM * difficultyMultiplier * timeFactor * accuracy
+   );
+
+   return [Math.round(rawWPM), realWPM];
+ };
+
 
   const calculateMissedChars = (generated: string, prompt: string) => {
     let missed = 0;
@@ -121,8 +139,8 @@ export const generateWPM = async (
       parse_mode: "MarkdownV2",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "🔄 Restart Game", callback_data: "restart_game" }],
-          [{ text: "🏘 Home", callback_data: "go_home" }],
+          [{ text: "🔄 Restart Game", callback_data: "restart_challenge" }],
+          [{ text: "🏘 Home", callback_data: "restart_game" }],
         ],
       },
     }
