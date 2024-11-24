@@ -1,7 +1,6 @@
 import TelegramBot, { CallbackQuery, Message } from "node-telegram-bot-api";
 import { SinglePlayerMessage } from "../messages";
 import { startDurationChallenge, startTextCountChallenge } from "./start";
-import { handleHomeCallback } from "../start/handleStart";
 
 export const gameState: {
   [key: number]: { intervalId?: NodeJS.Timeout; gameOver: boolean };
@@ -25,7 +24,7 @@ export const singlePlayerHandler = (bot: TelegramBot, chatId: number) => {
           { text: "🔴 Hard", callback_data: "hard" },
           { text: "🔥 Nightmare", callback_data: "nightmare" },
         ],
-        [{ text: "🏘 Home", callback_data: "home" }],
+        [{ text: "🏘 Home", callback_data: "restart_game" }],
       ],
     },
   });
@@ -74,7 +73,7 @@ export const setupCallbackQueryListener2 = (
             { text: "60 words 📝", callback_data: "60" },
             { text: "100 words 📝", callback_data: "100" },
           ],
-          [{ text: "🏠 Home", callback_data: "home" }],
+          [{ text: "🏠 Home", callback_data: "restart_game" }],
         ],
       },
     });
@@ -92,7 +91,7 @@ export const setupCallbackQueryListener2 = (
             { text: "1 minute 🕐", callback_data: "1min" },
             { text: "3 minutes 🕒", callback_data: "3min" },
           ],
-          [{ text: "🏠 Home", callback_data: "home" }],
+          [{ text: "🏠 Home", callback_data: "restart_game" }],
         ],
       },
     });
