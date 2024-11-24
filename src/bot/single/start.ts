@@ -1,7 +1,16 @@
 import TelegramBot from "node-telegram-bot-api";
 import { generateParagraph } from "../utils/generateP";
 import { gameState, startTime, userAnswers } from "./singlePlayer";
-import { generateWPM } from "../utils/generateWPM";
+import { generateWPM, getDutation } from "../utils/generateWPM";
+
+const addNewLines = (text: string, wordsPerLine: number) => {
+  const words = text.split(" ");
+  return words
+    .map((word, index) =>
+      index % wordsPerLine === 0 && index !== 0 ? "\n\n" + word : word
+    )
+    .join(" ");
+};
 
 export const startTextCountChallenge = (
   bot: TelegramBot,
@@ -14,7 +23,8 @@ export const startTextCountChallenge = (
   let messageId: number | undefined;
 
   const paragraph = generateParagraph(difficulty, options);
-  bot.sendMessage(chatId, paragraph, {
+  const formattedParagraph = addNewLines(paragraph, 20);
+  bot.sendMessage(chatId, formattedParagraph, {
     protect_content: true,
     disable_web_page_preview: true,
   });
@@ -80,7 +90,7 @@ export const startTextCountChallenge = (
           chatId,
           difficulty,
           options,
-          paragraph,
+          formattedParagraph,
           typedMessage,
           timeSpent
         );
@@ -102,17 +112,19 @@ export const startDurationChallenge = (
   options: { duration: string },
   difficulty: string
 ) => {
-  const durationInSeconds = parseInt(options.duration);
+  const durationInSeconds = getDutation(options.duration);
   let remainingTime = durationInSeconds;
   let messageId: number | undefined;
 
   const paragraph = generateParagraph(difficulty, options);
-  bot.sendMessage(chatId, paragraph, {
+  const formattedParagraph = addNewLines(paragraph, 20);
+
+  bot.sendMessage(chatId, formattedParagraph, {
     protect_content: true,
     disable_web_page_preview: true,
   });
 
-  userAnswers[chatId] = paragraph;
+  userAnswers[chatId] = formattedParagraph;
   startTime[chatId] = new Date().getTime();
   gameState[chatId] = { intervalId: undefined, gameOver: false };
 

@@ -2,7 +2,7 @@ import TelegramBot from "node-telegram-bot-api";
 import SinglePlay from "../../db/models/singlePlay";
 import { gameOverCaption } from "../messages";
 
-const getDutation = (duration: string) => {
+export const getDutation = (duration: string) => {
   switch (duration) {
     case "15sec":
       return 15;
