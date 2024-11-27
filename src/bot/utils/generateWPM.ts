@@ -26,54 +26,50 @@ export const generateWPM = async (
   promptText: string,
   timeTaken: number
 ) => {
- const calculateWPM = (
-   typedText: string,
-   promptText: string,
-   timeTaken: number,
-   difficulty: string,
-   duration: number
- ): [number, number] => {
-   const normalizeText = (text: string) =>
-     text.replace(/\s+/g, " ").trim().split(" ");
+  const calculateWPM = (
+    typedText: string,
+    promptText: string,
+    timeTaken: number,
+    difficulty: string,
+    accuracy: number
+  ): [number, number] => {
+    const normalizeText = (text: string) =>
+      text.replace(/\s+/g, " ").trim().split(" ");
 
-   const typedWords = normalizeText(typedText);
-   const promptWords = normalizeText(promptText);
+    const typedWords = normalizeText(typedText);
+    const promptWords = normalizeText(promptText);
 
-   let correctChars = 0;
-   let totalChars = 0;
+    let correctChars = 0;
+    let totalChars = 0;
 
-   promptWords.forEach((word, index) => {
-     const typedWord = typedWords[index] || "";
-     const minLength = Math.min(word.length, typedWord.length);
+    promptWords.forEach((word, index) => {
+      const typedWord = typedWords[index] || "";
+      const minLength = Math.min(word.length, typedWord.length);
 
-     for (let i = 0; i < minLength; i++) {
-       if (word[i] === typedWord[i]) {
-         correctChars++;
-       }
-     }
-     totalChars += word.length;
-   });
+      for (let i = 0; i < minLength; i++) {
+        if (word[i] === typedWord[i]) {
+          correctChars++;
+        }
+      }
+      totalChars += word.length;
+    });
 
-   const accuracy = totalChars > 0 ? correctChars / totalChars : 0;
-   const rawWPM =
-     typedText.replace(/\s+/g, " ").trim().split(" ").length / (timeTaken / 60);
+    const rawWPM =
+      typedText.replace(/\s+/g, " ").trim().split(" ").length /
+      (timeTaken / 60);
+    const acc = accuracy / 100;
+    const difficultyMultiplier =
+      {
+        easy: 1.5,
+        medium: 1,
+        hard: 0.8,
+        nightmare: 0.5,
+      }[difficulty.toLowerCase()] || 1;
 
-   const difficultyMultiplier =
-     {
-       easy: 1,
-       medium: 1.2,
-       hard: 1.5,
-       nightmare: 2,
-     }[difficulty.toLowerCase()] || 1;
+    const realWPM = Math.round(rawWPM * difficultyMultiplier * acc);
 
-   const timeFactor = timeTaken <= duration ? 1 : duration / timeTaken;
-   const realWPM = Math.round(
-     rawWPM * difficultyMultiplier * timeFactor * accuracy
-   );
-
-   return [Math.round(rawWPM), realWPM];
- };
-
+    return [Math.round(rawWPM), realWPM];
+  };
 
   const calculateMissedChars = (generated: string, prompt: string) => {
     let missed = 0;
@@ -106,22 +102,38 @@ export const generateWPM = async (
 
   const duration = options.duration ? parseInt(options.duration) : 0;
 
-  const wpm = calculateWPM(
-    promptText,
-    generatedText,
-    timeTaken,
-    difficulty,
-    duration
-  );
-
   const missedChars = calculateMissedChars(generatedText, promptText);
   const newChars = calculateNewChars(generatedText, promptText);
   const accuracyValue = parseFloat(
     calculateAccuracy(generatedText, promptText)
   );
   const accuracy = isNaN(accuracyValue) ? 0 : accuracyValue;
+  const wpm = calculateWPM(
+    promptText,
+    generatedText,
+    timeTaken,
+    difficulty,
+    accuracy
+  );
 
-  
+  try {
+    const status = accuracy > 80 ? "Success" : "Fail"; 
+    await SinglePlay.create({
+      chatId,
+      difficulty,
+      duration: getDutation(options.duration as string),
+      timeTaken,
+      adjustedWpm: wpm[1],
+      rawWpm: wpm[0],
+      accuracy,
+      missedChars,
+      newChars,
+      status,
+    });
+  } catch (error) {
+    console.error("Error saving game data:", error);
+  }
+
   bot.sendPhoto(
     chatId,
     "https://i.ibb.co/4j2wHQH/IMG-20241122-200539-983.jpg",
@@ -145,5 +157,4 @@ export const generateWPM = async (
       },
     }
   );
-
 };

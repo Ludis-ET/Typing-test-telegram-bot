@@ -139,14 +139,14 @@ export const setupCallbackQueryListener2 = (
     const userChoice = userChoices[chatId];
     bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
 
-    if (userChoice.textCount) {
+    if (userChoice && userChoice.textCount) {
       startTextCountChallenge(
         bot,
         chatId,
         { textCount: userChoice.textCount },
         userChoice.difficulty
       );
-    } else if (userChoice.duration) {
+    } else if (userChoice && userChoice.duration) {
       startDurationChallenge(
         bot,
         chatId,
