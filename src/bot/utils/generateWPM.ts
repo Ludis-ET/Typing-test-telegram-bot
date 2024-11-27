@@ -58,17 +58,10 @@ export const generateWPM = async (
       typedText.replace(/\s+/g, " ").trim().split(" ").length /
       (timeTaken / 60);
     const acc = accuracy / 100;
-    const difficultyMultiplier =
-      {
-        easy: 1.5,
-        medium: 1,
-        hard: 0.8,
-        nightmare: 0.5,
-      }[difficulty.toLowerCase()] || 1;
 
     const realWPM = Math.round(rawWPM * acc);
 
-    return [Math.round(rawWPM), realWPM];
+    return [Math.round(rawWPM), Math.max(realWPM, 0)];
   };
 
   const calculateMissedChars = (generated: string, prompt: string) => {

@@ -139,7 +139,7 @@ export const setupCallbackQueryListener2 = (
   } else if (data === "restart_challenge") {
     const userChoice = userChoices[chatId];
     bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
-    if (!userChoice) {
+    if (!userChoice.textCount && !userChoice.duration) {
       bot.sendMessage(chatId, "❌ unable to restart\\!");
       handleHomeCallback(bot, query.message as Message);
     }

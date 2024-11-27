@@ -15,7 +15,7 @@ export const setupCallbackQueryListener = (bot: TelegramBot) => {
     if (data === "single_player") {
       singlePlayerHandler(bot, chatId);
     } else if (data === "multiplayer") {
-      bot.sendMessage(chatId, "👥 Multiplayer mode selected!");
+      bot.sendMessage(chatId, "👥 Multiplayer coming soon!");
     } else if (data === "restart_game") {
       bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
       handleHomeCallback(bot, query.message as Message);
