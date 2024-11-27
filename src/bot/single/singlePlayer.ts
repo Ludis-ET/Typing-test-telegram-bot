@@ -1,6 +1,7 @@
 import TelegramBot, { CallbackQuery, Message } from "node-telegram-bot-api";
 import { SinglePlayerMessage } from "../messages";
 import { startDurationChallenge, startTextCountChallenge } from "./start";
+import { handleHomeCallback } from "../start/handleStart";
 
 export const gameState: {
   [key: number]: { intervalId?: NodeJS.Timeout; gameOver: boolean };
@@ -138,15 +139,18 @@ export const setupCallbackQueryListener2 = (
   } else if (data === "restart_challenge") {
     const userChoice = userChoices[chatId];
     bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
-
-    if (userChoice && userChoice.textCount) {
+    if (!userChoice) {
+      bot.sendMessage(chatId, "❌ unable to restart\\!");
+      handleHomeCallback(bot, query.message as Message);
+    }
+    if (userChoice.textCount) {
       startTextCountChallenge(
         bot,
         chatId,
         { textCount: userChoice.textCount },
         userChoice.difficulty
       );
-    } else if (userChoice && userChoice.duration) {
+    } else if (userChoice.duration) {
       startDurationChallenge(
         bot,
         chatId,

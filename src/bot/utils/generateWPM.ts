@@ -66,7 +66,7 @@ export const generateWPM = async (
         nightmare: 0.5,
       }[difficulty.toLowerCase()] || 1;
 
-    const realWPM = Math.round(rawWPM * difficultyMultiplier * acc);
+    const realWPM = Math.round(rawWPM * acc);
 
     return [Math.round(rawWPM), realWPM];
   };
