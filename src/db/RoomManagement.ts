@@ -1,7 +1,7 @@
-import Room from "./models/Room.js";
+import Room from "./models/Room";
 
 interface Player {
-  telegramId: string;
+  telegramId: number;
   username?: string;
 }
 
@@ -19,7 +19,7 @@ export const createRoom = async (
   await newRoom.save();
 };
 
-export const addPlayerToRoom = async (roomId: "random" | "friend", player: Player) => {
+export const addPlayerToRoom = async (roomId: string, player: Player) => {
   const room = await Room.findById(roomId);
   if (room && room.players.length < 10) {
     room.players.push(player);

@@ -16,6 +16,7 @@ export const setupCallbackQueryListener = (bot: TelegramBot) => {
     if (data === "single_player") {
       singlePlayerHandler(bot, chatId);
     } else if (data === "multiplayer") {
+      bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
       multiPlayerHandler(bot, chatId);
     } else if (data === "restart_game") {
       bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
