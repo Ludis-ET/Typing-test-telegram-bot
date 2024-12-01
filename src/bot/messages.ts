@@ -90,3 +90,24 @@ export const gameOverCaption = (
 
 > _"Success is the sum of small efforts, repeated day in and day out\\."_ Keep it up\\!
 `;
+
+
+export const MultiplayerMessage = (): string => `
+  🎮 *Welcome to Multiplayer Mode\\!*  
+
+  Get ready to compete and show off your typing prowess\\! 🌟  
+  Invite your friends or challenge random players in real\\-time typing duels\\!
+
+  Here are the game modes to choose from:
+
+  \\\- *🟢 Casual Match*: Play for fun and improve your skills\\.  
+  \\\- *🟡 Ranked Match*: Compete to climb the leaderboard and earn rewards\\.  
+  \\\- *🔴 Team Battle*: Join forces with friends and face another team head\\-on\\.  
+  \\\- *🔥 Free\\-For\\-All*: Every player for themselves — fastest typist wins\\!
+
+  Team up or go solo, but remember — speed and accuracy are the keys to victory\\!
+
+  _Good luck, and may the fastest fingers win\\!_
+
+  ✨ _“Type smart, type fast, and dominate the competition\\!”_ ✨
+`;

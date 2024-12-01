@@ -4,6 +4,7 @@ import {
   singlePlayerHandler,
 } from "../single/singlePlayer";
 import { handleHomeCallback } from "./handleStart";
+import { multiPlayerCallbacks } from "../multiplayer/multiPlayerCallbacks";
 
 export const setupCallbackQueryListener = (bot: TelegramBot) => {
   bot.on("callback_query", async (query) => {
@@ -19,6 +20,8 @@ export const setupCallbackQueryListener = (bot: TelegramBot) => {
     } else if (data === "restart_game") {
       bot.deleteMessage(chatId, query.message!.message_id).catch(() => {});
       handleHomeCallback(bot, query.message as Message);
+    } else if (data.startsWith("multi_")) {
+      multiPlayerCallbacks(bot, query, chatId, data);
     } else {
       setupCallbackQueryListener2(bot, query, chatId, data);
     }
