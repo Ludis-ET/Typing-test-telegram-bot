@@ -62,7 +62,6 @@ Want to compete with me and practice too\\? 💪 It's super fun\\!
 *Spoiler:* It's going to be tough, but I know you can do it\\! 😜
 `;
 
-
 export const gameOverCaption = (
   raw: number,
   wpm: number,
@@ -91,23 +90,19 @@ export const gameOverCaption = (
 > _"Success is the sum of small efforts, repeated day in and day out\\."_ Keep it up\\!
 `;
 
-
 export const MultiplayerMessage = (): string => `
-  🎮 *Welcome to Multiplayer Mode\\!*  
+    🎮 *Welcome to Multiplayer Mode\\!*  
 
-  Get ready to compete and show off your typing prowess\\! 🌟  
-  Invite your friends or challenge random players in real\\-time typing duels\\!
+    Get ready to compete and show off your typing prowess\\! 🌟  
+    Invite your friends or challenge random players in real\\-time typing duels\\!
 
-  Here are the game modes to choose from:
+    Here are your options:
 
-  \\\- *🟢 Casual Match*: Play for fun and improve your skills\\.  
-  \\\- *🟡 Ranked Match*: Compete to climb the leaderboard and earn rewards\\.  
-  \\\- *🔴 Team Battle*: Join forces with friends and face another team head\\-on\\.  
-  \\\- *🔥 Free\\-For\\-All*: Every player for themselves — fastest typist wins\\!
+    \\\- *🔀 Random Match*: Match with a random player and race to the finish\\.  
+    \\\- *👥 Friend Match*: Play with friends in a private typing battle\\.  
+    \\\- *🏘 Home*: Return to the main menu and explore other modes\\!
 
-  Team up or go solo, but remember — speed and accuracy are the keys to victory\\!
+    _Good luck, and may the fastest fingers win\\!_
 
-  _Good luck, and may the fastest fingers win\\!_
-
-  ✨ _“Type smart, type fast, and dominate the competition\\!”_ ✨
-`;
+    ✨ _“Type smart, type fast, and dominate the competition\\!”_ ✨
+  `;
