@@ -39,7 +39,7 @@ export const multiPlayerCallbacks = async (
         `👥 *Room Created Successfully\\!* 🏠  
 
         Share this room ID with your friends to join:  
-        \`\`\`${roomKey}\`\`\`  
+        \`\`\`${roomKey.split("-").join("\\-")}\`\`\`  
         
         You can start the game once everyone has joined\\. 🚀`,
         {
