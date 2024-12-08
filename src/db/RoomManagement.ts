@@ -1,7 +1,7 @@
 import Room from "./models/Room";
 
 interface Player {
-  telegramId: string | number; // Changed from number to string
+  telegramId: string; // Changed from number to string
   username?: string;
   isCreator?: boolean;
 }

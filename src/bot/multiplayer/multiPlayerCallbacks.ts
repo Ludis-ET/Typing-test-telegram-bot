@@ -50,7 +50,7 @@ export const multiPlayerCallbacks = async (
     try {
       const roomKey = uuidv4().split("-")[0];
       await createRoom("friend", roomKey, {
-        telegramId: userId,
+        telegramId: userId.toString(),
         username,
         isCreator: true,
       });
@@ -149,7 +149,7 @@ export const multiPlayerCallbacks = async (
           return;
         }
 
-        await addPlayerToRoom(roomKey, { telegramId: userId, username });
+        await addPlayerToRoom(roomKey, { telegramId: userId.toString(), username });
 
         room.players.forEach((player) => {
           bot.sendMessage(
