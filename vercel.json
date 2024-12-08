@@ -1,10 +1,21 @@
 {
-  "name": "telegram-bot-server",
   "version": 2,
   "builds": [
     {
-      "src": "src/index.ts",
-      "use": "@vercel/node"
+      "src": "index.ts",
+      "use": "@vercel/node",
+      "config": {
+        "copy": [
+          { "from": "node_modules", "to": "node_modules" },
+          { "from": "dist", "to": "dist" } 
+        ]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "dist/index.js"
     }
   ]
 }
