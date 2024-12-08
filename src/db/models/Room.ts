@@ -7,11 +7,16 @@ const roomSchema = new mongoose.Schema({
     {
       telegramId: { type: String, required: true },
       username: { type: String },
-      isCreator: { type: Boolean, default: false }, 
+      isCreator: { type: Boolean, default: false },
     },
   ],
-  isAvailable: { type: Boolean, default: true }, 
+  isAvailable: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
+  gameSettings: {
+    difficulty: { type: String, enum: ["easy", "medium", "hard", "nightmare"] },
+    mode: { type: String, enum: ["time", "word_count"] },
+    value: { type: Number },
+  },
 });
 
 export default mongoose.model("Room", roomSchema);

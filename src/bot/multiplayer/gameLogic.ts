@@ -32,18 +32,6 @@ export const startGame = async (
       return;
     }
 
-    bot.sendMessage(
-      chatId,
-      "🚀 The game has started\\! Good luck to all players\\!",
-      {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: "🏘 Home", callback_data: "restart_game" }],
-          ],
-        },
-      }
-    );
-
     room.players.forEach((player) => {
       bot.sendMessage(
         player.telegramId,

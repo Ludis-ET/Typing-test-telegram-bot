@@ -44,3 +44,20 @@ export const updateRoomAvailability = async (
 ) => {
   await Room.findByIdAndUpdate(roomId, { isAvailable });
 };
+
+export const saveGameSettings = async (
+  roomId: string,
+  settings: {
+    difficulty: "easy" | "medium" | "hard" | "nightmare";
+    mode: "time" | "word_count";
+    value: number;
+  }
+) => {
+  const room = await Room.findById(roomId);
+  if (!room) {
+    throw new Error("Room not found");
+  }
+
+  room.gameSettings = settings;
+  await room.save();
+};
