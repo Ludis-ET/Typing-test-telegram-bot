@@ -67,6 +67,49 @@ export const GameStart = async (
 
   const timerStart = Date.now();
 
+  const finishGame = async () => {
+    const leaderboard = Object.entries(playerStatuses)
+      .map(([telegramId, status]) => ({
+        telegramId,
+        timeTaken: status.timeTaken || Infinity,
+      }))
+      .sort((a, b) => a.timeTaken - b.timeTaken);
+
+    console.log(leaderboard);
+    console.log(playerStatuses);
+    console.log(players);
+    console.log(settings)
+    console.log(paragraph)
+    console.log(gameTextMessages)
+
+    await Promise.all(
+      players.map((player) =>
+        bot.sendMessage(
+          player.telegramId,
+          `📊 *Calculating Leaderboard\\.\\.\\.*`,
+          {
+            parse_mode: "MarkdownV2",
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  { text: "🔄 Replay", callback_data: "replay" },
+                  { text: "🏠 Home", callback_data: "restart_game" },
+                ],
+              ],
+            },
+          }
+        )
+      )
+    );
+
+    bot.once("callback_query", async (callbackQuery) => {
+      if (callbackQuery.data === "replay") {
+        await bot.answerCallbackQuery(callbackQuery.id);
+        GameStart(bot, players, settings);
+      }
+    });
+  };
+
   if (mode === "time") {
     const interval = setInterval(async () => {
       const remaining = value - Math.floor((Date.now() - timerStart) / 1000);
@@ -76,7 +119,7 @@ export const GameStart = async (
         Object.values(playerStatuses).every((p) => p.finished)
       ) {
         clearInterval(interval);
-        finishGame(bot, players, playerStatuses, paragraph, settings);
+        await finishGame();
         return;
       }
 
@@ -101,7 +144,7 @@ export const GameStart = async (
 
       if (Object.values(playerStatuses).every((p) => p.finished)) {
         clearInterval(countUpInterval);
-        finishGame(bot, players, playerStatuses, paragraph, settings);
+        await finishGame();
         return;
       }
 
@@ -122,7 +165,7 @@ export const GameStart = async (
     }, 1000);
   }
 
-  bot.on("message", async (msg) => {
+  bot.once("message", async (msg) => {
     const playerId = msg.chat.id.toString();
     if (!playerStatuses[playerId]?.finished) {
       const timeTaken = Math.floor((Date.now() - timerStart) / 1000);
@@ -136,46 +179,8 @@ export const GameStart = async (
       );
 
       if (Object.values(playerStatuses).every((p) => p.finished)) {
-        finishGame(bot, players, playerStatuses, paragraph, settings);
+        await finishGame();
       }
-    }
-  });
-};
-
-const finishGame = async (
-  bot: TelegramBot,
-  players: { telegramId: string; username?: string }[],
-  playerStatuses: Record<string, { finished: boolean; timeTaken?: number }>,
-  paragraph: string,
-  settings: { difficulty: string; mode: string; value: number }
-) => {
-  const leaderboard = Object.entries(playerStatuses)
-    .map(([telegramId, status]) => ({
-      telegramId,
-      timeTaken: status.timeTaken || Infinity,
-    }))
-    .sort((a, b) => a.timeTaken - b.timeTaken);
-
-  await Promise.all(
-    players.map((player) =>
-      bot.sendMessage(player.telegramId, `📊 *Calculating Leaderboard...*`, {
-        parse_mode: "MarkdownV2",
-        reply_markup: {
-          inline_keyboard: [
-            [
-              { text: "🔄 Replay", callback_data: "replay" },
-              { text: "🏠 Home", callback_data: "restart_game" },
-            ],
-          ],
-        },
-      })
-    )
-  );
-
-  bot.on("callback_query", async (callbackQuery) => {
-    if (callbackQuery.data === "replay") {
-      await bot.answerCallbackQuery(callbackQuery.id);
-      GameStart(bot, players, settings);
     }
   });
 };
