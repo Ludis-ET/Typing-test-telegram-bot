@@ -1,5 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 import { fetchRoom, saveGameSettings } from "../../db/RoomManagement";
+import { GameStart } from "./start";
 
 export const startGame = async (
   bot: TelegramBot,
@@ -100,7 +101,7 @@ export const startGame = async (
 
       bot.once("callback_query", async (modeQuery) => {
         bot.deleteMessage(chatId, modeMessage.message_id).catch(() => {});
-        const mode =
+        const mode: "time" | "word_count" =
           modeQuery.data === "game_mode_time" ? "time" : "word_count";
 
         const optionsMessage = await bot.sendMessage(
@@ -146,15 +147,7 @@ export const startGame = async (
 
           try {
             await saveGameSettings(roomId, settings);
-            room.players.forEach((player) => {
-              bot.sendMessage(
-                player.telegramId,
-                `🎮 *Game Starting Soon\\!*\n\n*Difficulty:* ${difficulty}\n*Mode:* ${mode}\n*Value:* ${value}`,
-                {
-                  parse_mode: "MarkdownV2",
-                }
-              );
-            });
+            GameStart(bot, room.players, settings);
           } catch {
             bot.sendMessage(
               chatId,
