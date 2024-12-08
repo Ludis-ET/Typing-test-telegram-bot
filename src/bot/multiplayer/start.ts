@@ -15,7 +15,7 @@ export const GameStart = async (
 
   const playerStatuses: Record<
     string,
-    { finished: boolean; timeTaken?: number }
+    { finished: boolean; timeTaken?: number; typedText?: string }
   > = {};
   players.forEach((player) => {
     playerStatuses[player.telegramId] = { finished: false };
@@ -71,22 +71,28 @@ export const GameStart = async (
     const leaderboard = Object.entries(playerStatuses)
       .map(([telegramId, status]) => ({
         telegramId,
+        username:
+          players.find((p) => p.telegramId === telegramId)?.username || "",
         timeTaken: status.timeTaken || Infinity,
+        typedText: status.typedText || "No input",
       }))
       .sort((a, b) => a.timeTaken - b.timeTaken);
 
-    console.log(leaderboard);
-    console.log(playerStatuses);
-    console.log(players);
-    console.log(settings)
-    console.log(paragraph)
-    console.log(gameTextMessages)
+    console.log("Game Over\\! Leaderboard:");
+    console.table(leaderboard);
 
     await Promise.all(
       players.map((player) =>
         bot.sendMessage(
           player.telegramId,
-          `📊 *Calculating Leaderboard\\.\\.\\.*`,
+          `📊 *Leaderboard*\n\n${leaderboard
+            .map(
+              (entry, index) =>
+                `${index + 1}. ${entry.username || "Unknown"} - ${
+                  entry.timeTaken === Infinity ? "DNF" : `${entry.timeTaken}s`
+                }\nTyped: "${entry.typedText}"`
+            )
+            .join("\n\n")}`,
           {
             parse_mode: "MarkdownV2",
             reply_markup: {
@@ -110,77 +116,63 @@ export const GameStart = async (
     });
   };
 
-  if (mode === "time") {
-    const interval = setInterval(async () => {
-      const remaining = value - Math.floor((Date.now() - timerStart) / 1000);
+  const interval = setInterval(async () => {
+    const elapsed = Math.floor((Date.now() - timerStart) / 1000);
 
-      if (
-        remaining <= 0 ||
-        Object.values(playerStatuses).every((p) => p.finished)
-      ) {
-        clearInterval(interval);
-        await finishGame();
-        return;
-      }
+    if (mode === "time" && elapsed >= value) {
+      clearInterval(interval);
+      await finishGame();
+      return;
+    }
 
-      await Promise.all(
-        gameTextMessages.map((msg, index) => {
-          if (!playerStatuses[players[index].telegramId].finished) {
-            return bot.editMessageText(
-              `${paragraph}\n\n⌛ *Time Left: ${remaining}s*`,
-              {
-                chat_id: players[index].telegramId,
-                message_id: msg.message_id,
-                parse_mode: "MarkdownV2",
-              }
-            );
-          }
-        })
-      );
-    }, 1000);
-  } else if (mode === "word_count") {
-    const countUpInterval = setInterval(async () => {
-      const elapsed = Math.floor((Date.now() - timerStart) / 1000);
+    if (Object.values(playerStatuses).every((p) => p.finished)) {
+      clearInterval(interval);
+      await finishGame();
+      return;
+    }
 
-      if (Object.values(playerStatuses).every((p) => p.finished)) {
-        clearInterval(countUpInterval);
-        await finishGame();
-        return;
-      }
+    await Promise.all(
+      gameTextMessages.map((msg, index) => {
+        if (!playerStatuses[players[index].telegramId].finished) {
+          return bot.editMessageText(
+            `${paragraph}\n\n${
+              mode === "time"
+                ? `⌛ *Time Left: ${value - elapsed}s*`
+                : `⏱ *Elapsed Time: ${elapsed}s*`
+            }`,
+            {
+              chat_id: players[index].telegramId,
+              message_id: msg.message_id,
+              parse_mode: "MarkdownV2",
+            }
+          );
+        }
+      })
+    );
+  }, 1000);
 
-      await Promise.all(
-        gameTextMessages.map((msg, index) => {
-          if (!playerStatuses[players[index].telegramId].finished) {
-            return bot.editMessageText(
-              `${paragraph}\n\n⏱ *Elapsed Time: ${elapsed}s*`,
-              {
-                chat_id: players[index].telegramId,
-                message_id: msg.message_id,
-                parse_mode: "MarkdownV2",
-              }
-            );
-          }
-        })
-      );
-    }, 1000);
-  }
-
-  bot.once("message", async (msg) => {
+  bot.on("message", async (msg) => {
     const playerId = msg.chat.id.toString();
-    if (!playerStatuses[playerId]?.finished) {
-      const timeTaken = Math.floor((Date.now() - timerStart) / 1000);
+    if (playerStatuses[playerId]?.finished) return;
 
-      playerStatuses[playerId] = { finished: true, timeTaken };
+    const typedText = msg.text || "";
+    const timeTaken = Math.floor((Date.now() - timerStart) / 1000);
 
-      bot.sendMessage(
-        playerId,
-        `🎉 *You finished in ${timeTaken}s\\!* Please wait for your friends to finish\\.`,
-        { parse_mode: "MarkdownV2" }
-      );
+    playerStatuses[playerId] = { finished: true, timeTaken, typedText };
 
-      if (Object.values(playerStatuses).every((p) => p.finished)) {
-        await finishGame();
-      }
+    console.log(
+      `Player ${playerId} finished in ${timeTaken}s\\. Typed text: "${typedText}"`
+    );
+
+    bot.sendMessage(
+      playerId,
+      `🎉 *You finished in ${timeTaken}s\\!* Please wait for others to finish\\.`,
+      { parse_mode: "MarkdownV2" }
+    );
+
+    if (Object.values(playerStatuses).every((p) => p.finished)) {
+      clearInterval(interval);
+      await finishGame();
     }
   });
 };
