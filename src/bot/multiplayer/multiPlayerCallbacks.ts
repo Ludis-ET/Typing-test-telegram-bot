@@ -82,6 +82,102 @@ export const multiPlayerCallbacks = async (
         },
       });
     }
+  } else if (data === "multi_join_friend") {
+    bot.sendMessage(chatId, "🔑 Please enter the Room ID to join:");
+
+    bot.once("message", async (msg) => {
+      if (!msg.text) {
+        bot.sendMessage(chatId, "⚠️ Please provide a valid Room ID.", {
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: "🏘 Home", callback_data: "restart_game" }],
+            ],
+          },
+        });
+        return;
+      }
+
+      const roomKey = msg.text.trim();
+      try {
+        const room = await fetchRoom({ _id: roomKey });
+
+        if (!room) {
+          bot.sendMessage(chatId, "⚠️ Invalid Room ID. Please try again.", {
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: "🏘 Home", callback_data: "restart_game" }],
+              ],
+            },
+          });
+          return;
+        }
+
+        if (
+          room.players.some((player) => player.telegramId === userId.toString())
+        ) {
+          bot.sendMessage(chatId, "⚠️ You are already in this room!", {
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: "🏘 Home", callback_data: "restart_game" }],
+              ],
+            },
+          });
+          return;
+        }
+
+        if (room.players.length >= 10) {
+          bot.sendMessage(
+            chatId,
+            "⚠️ This room is full. Please join another.",
+            {
+              reply_markup: {
+                inline_keyboard: [
+                  [{ text: "🏘 Home", callback_data: "restart_game" }],
+                ],
+              },
+            }
+          );
+          return;
+        }
+
+        await addPlayerToRoom(roomKey, { telegramId: userId, username });
+
+        room.players.forEach((player) => {
+          bot.sendMessage(
+            player.telegramId,
+            `👤 ${username} has joined your room! 🎉\n\nRoom ID: \`${roomKey}\``,
+            {
+              parse_mode: "MarkdownV2",
+            }
+          );
+        });
+
+        bot.sendMessage(
+          chatId,
+          `🎉 You joined the room successfully! 🏠\n\nRoom ID: \`${roomKey}\`\n\nWait for the creator to start the game. 🚀`,
+          {
+            parse_mode: "MarkdownV2",
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: "🏘 Home", callback_data: "restart_game" }],
+              ],
+            },
+          }
+        );
+      } catch {
+        bot.sendMessage(
+          chatId,
+          "⚠️ Unable to join the room. Please try again.",
+          {
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: "🏘 Home", callback_data: "restart_game" }],
+              ],
+            },
+          }
+        );
+      }
+    });
   } else if (data.startsWith("multi_start_game_")) {
     const roomId = data.split("_")[3];
     await startGame(bot, chatId, roomId, userId);
