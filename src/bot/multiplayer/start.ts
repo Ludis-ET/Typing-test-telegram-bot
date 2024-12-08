@@ -38,7 +38,8 @@ export const GameStart = async (
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const startTime = Date.now();
+    const startTime = Date.now(); // Capture the start time
+
     const gameText = await bot.sendMessage(
       telegramId,
       `🔤 *Your Text:*\n\n\`${paragraph}\``,
@@ -50,56 +51,52 @@ export const GameStart = async (
       }
     );
 
-    setTimeout(
-      async () => {
-        const timeTaken =
-          mode === "word_count"
-            ? Math.floor((Date.now() - startTime) / 1000)
-            : value;
-        const rawWPM = Math.floor(Math.random() * 50) + 50;
-        const accuracy = Math.floor(Math.random() * 20) + 80;
-        const WPM = Math.floor(rawWPM * (accuracy / 100));
-        playerStats[telegramId] = { rawWPM, WPM, accuracy, timeTaken };
-
-        await bot.sendMessage(
-          telegramId,
-          `🎉 *Game Over\\!* Your results:\n\n` +
-            `💬 *Raw WPM:* ${rawWPM}\n` +
-            `✅ *Accuracy:* ${accuracy}%\n` +
-            `🔥 *Adjusted WPM:* ${WPM}\n` +
-            `${
-              mode === "word_count"
-                ? `⏱ *Time Taken:* ${timeTaken}s`
-                : `⌛ *Duration:* ${value}s`
-            }`,
-          { parse_mode: "MarkdownV2" }
-        );
-
-        if (Object.keys(playerStats).length === players.length) {
-          const leaderboard = Object.entries(playerStats)
-            .sort(([, a], [, b]) => b.WPM - a.WPM)
-            .map(([id, stats], index) => {
-              const player = players.find((p) => p.telegramId === id);
-              return `*${index + 1}\\.* ${player?.username || "Player"}\\: 🔥 ${
-                stats.WPM
-              } WPM \\(💬 ${stats.rawWPM} WPM, ✅ ${
-                stats.accuracy
-              }% Accuracy, ${
-                mode === "word_count" ? `⏱ ${stats.timeTaken}s` : `⌛ ${value}s`
-              }\\)`;
-            })
-            .join("\n");
-
-          players.forEach((player) => {
-            bot.sendMessage(
-              player.telegramId,
-              `🏆 *Leaderboard*\n\n${leaderboard}`,
-              { parse_mode: "MarkdownV2" }
-            );
-          });
+    if (mode === "time") {
+      let remaining = value;
+      while (remaining > 0) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        bot.editMessageText(`⌛ *Time Left: ${remaining--}s*`, {
+          chat_id: telegramId,
+          message_id: gameText.message_id,
+          parse_mode: "MarkdownV2",
+        });
+      }
+    } else {
+      await bot.editMessageText(
+        `⏱ *Timer Started*\nType the text as fast as you can!`,
+        {
+          chat_id: telegramId,
+          message_id: gameText.message_id,
+          parse_mode: "MarkdownV2",
         }
-      },
-      mode === "time" ? value * 1000 : 30000
-    );
+      );
+    }
+
+    const endTime = Date.now();
+    const timeTaken =
+      mode === "word_count" ? Math.floor((endTime - startTime) / 1000) : value;
+
+    const playerText = "player's typed text"; // Capture this from the player’s response.
+
+    console.log(`Player ${telegramId}:`);
+    console.log(`Typed Text: ${playerText}`);
+    console.log(`Time Taken: ${timeTaken}s`);
+    console.log(`Game Properties:`, settings);
+
+    // playerStats[telegramId] = { rawWPM, WPM, accuracy, timeTaken };
+
+    // await bot.sendMessage(
+    //   telegramId,
+    //   `🎉 *Game Over\\!* Your results:\n\n` +
+    //     `💬 *Raw WPM:* ${rawWPM}\n` +
+    //     `✅ *Accuracy:* ${accuracy}%\n` +
+    //     `🔥 *Adjusted WPM:* ${WPM}\n` +
+    //     `${
+    //       mode === "word_count"
+    //         ? `⏱ *Time Taken:* ${timeTaken}s`
+    //         : `⌛ *Duration:* ${value}s`
+    //     }`,
+    //   { parse_mode: "MarkdownV2" }
+    // );
   }
 };

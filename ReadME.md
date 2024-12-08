@@ -77,7 +77,7 @@ This project is licensed under the **MIT License**.
 
 - **Ludis**
 - **Email**: leulsegedmelaku1020@gmail.com
-- **GitHub**: [yourusername](https://github.com/ludis-et)
+- **GitHub**: [Ludis-ET](https://github.com/ludis-et)
 
 ---
 
