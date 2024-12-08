@@ -74,7 +74,7 @@ export const multiPlayerCallbacks = async (
         }
       );
     } catch {
-      bot.sendMessage(chatId, "⚠️ Unable to create room. Please try again.", {
+      bot.sendMessage(chatId, "⚠️ Unable to create room\. Please try again\.", {
         reply_markup: {
           inline_keyboard: [
             [{ text: "🏘 Home", callback_data: "restart_game" }],
@@ -87,7 +87,7 @@ export const multiPlayerCallbacks = async (
 
     bot.once("message", async (msg) => {
       if (!msg.text) {
-        bot.sendMessage(chatId, "⚠️ Please provide a valid Room ID.", {
+        bot.sendMessage(chatId, "⚠️ Please provide a valid Room ID\.", {
           reply_markup: {
             inline_keyboard: [
               [{ text: "🏘 Home", callback_data: "restart_game" }],
@@ -102,7 +102,7 @@ export const multiPlayerCallbacks = async (
         const room = await fetchRoom({ _id: roomKey });
 
         if (!room) {
-          bot.sendMessage(chatId, "⚠️ Invalid Room ID. Please try again.", {
+          bot.sendMessage(chatId, "⚠️ Invalid Room ID\. Please try again\.", {
             reply_markup: {
               inline_keyboard: [
                 [{ text: "🏘 Home", callback_data: "restart_game" }],
@@ -115,7 +115,7 @@ export const multiPlayerCallbacks = async (
         if (
           room.players.some((player) => player.telegramId === userId.toString())
         ) {
-          bot.sendMessage(chatId, "⚠️ You are already in this room!", {
+          bot.sendMessage(chatId, "⚠️ You are already in this room\!", {
             reply_markup: {
               inline_keyboard: [
                 [{ text: "🏘 Home", callback_data: "restart_game" }],
@@ -128,7 +128,7 @@ export const multiPlayerCallbacks = async (
         if (room.players.length >= 10) {
           bot.sendMessage(
             chatId,
-            "⚠️ This room is full. Please join another.",
+            "⚠️ This room is full\. Please join another\.",
             {
               reply_markup: {
                 inline_keyboard: [
@@ -154,7 +154,7 @@ export const multiPlayerCallbacks = async (
 
         bot.sendMessage(
           chatId,
-          `🎉 You joined the room successfully! 🏠\n\nRoom ID: \`${roomKey}\`\n\nWait for the creator to start the game. 🚀`,
+          `🎉 You joined the room successfully\! 🏠\n\nRoom ID: \`${roomKey}\`\n\nWait for the creator to start the game\. 🚀`,
           {
             parse_mode: "MarkdownV2",
             reply_markup: {
@@ -167,7 +167,7 @@ export const multiPlayerCallbacks = async (
       } catch {
         bot.sendMessage(
           chatId,
-          "⚠️ Unable to join the room. Please try again.",
+          "⚠️ Unable to join the room\. Please try again\.",
           {
             reply_markup: {
               inline_keyboard: [
