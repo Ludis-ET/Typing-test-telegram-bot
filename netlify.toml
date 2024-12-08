@@ -1,0 +1,8 @@
+[build]
+  command = "npm run build"
+  functions = "dist"
+
+[[redirects]]
+  from = "/(.*)"
+  to = "/dist/index.js"
+  status = 200
