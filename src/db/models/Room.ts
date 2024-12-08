@@ -17,6 +17,7 @@ const roomSchema = new mongoose.Schema({
     mode: { type: String, enum: ["time", "word_count"] },
     value: { type: Number },
   },
+  expiresAt: { type: Date, index: { expires: 30 } },
 });
 
 export default mongoose.model("Room", roomSchema);

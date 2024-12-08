@@ -61,10 +61,3 @@ export const saveGameSettings = async (
   room.gameSettings = settings;
   await room.save();
 };
-
-export const deleteRoom = async (roomId: string) => {
-  const room = await Room.findByIdAndDelete(roomId);
-  if (!room) {
-    throw new Error("Room not found");
-  }
-};
