@@ -147,7 +147,14 @@ export const startGame = async (
 
           try {
             await saveGameSettings(roomId, settings);
-            GameStart(bot, room.players, settings);
+            GameStart(
+              bot,
+              room.players.map(player => ({
+                telegramId: player.telegramId,
+                username: player.username || undefined,
+              })),
+              settings
+            );
           } catch {
             bot.sendMessage(
               chatId,
