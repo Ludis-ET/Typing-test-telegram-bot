@@ -1,7 +1,7 @@
 import Room from "./models/Room";
 
 interface Player {
-  telegramId: number;
+  telegramId: string | number; // Changed from number to string
   username?: string;
   isCreator?: boolean;
 }
@@ -61,7 +61,6 @@ export const saveGameSettings = async (
   room.gameSettings = settings;
   await room.save();
 };
-
 
 export const deleteRoom = async (roomId: string) => {
   const room = await Room.findByIdAndDelete(roomId);
