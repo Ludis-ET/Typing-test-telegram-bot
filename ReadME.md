@@ -36,7 +36,7 @@ Follow these steps to set up the bot locally.
     ```
 3. **Install dependencies**
     ```bash
-    npm install
+    pnpm install
     ```
 4. **Set up environment variables**
     - Create a `.env` file in the root directory.
@@ -50,7 +50,7 @@ Follow these steps to set up the bot locally.
 Start the bot with:
 
 ```bash
-npm run start
+pnpm run start
 ```
 
 ## Usage 📖
@@ -75,7 +75,7 @@ This project is licensed under the **MIT License**.
 
 ## Contact 📞
 
-- **Your Name**
+- **Ludis**
 - **Email**: leulsegedmelaku1020@gmail.com
 - **GitHub**: [yourusername](https://github.com/ludis-et)
 
