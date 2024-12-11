@@ -78,7 +78,7 @@ export const GameStart = async (
       players.map((player) =>
         bot.sendMessage(
           player.telegramId,
-          "⏳ Calculating leaderboard\\.\\.\\. Please wait\\.",
+          "⏳ Calculating leaderboard\.\.\. Please wait\.",
           {
             reply_markup: {
               inline_keyboard: [
@@ -128,7 +128,7 @@ export const GameStart = async (
     const leaderboardMessage = `📊 *Leaderboard*\n\n${leaderboard
       .map(
         (entry, index) =>
-          `${index + 1}\\. ${entry.username} \\- ${
+          `${index + 1}\. ${entry.username} \- ${
             entry.timeTaken === Infinity
               ? "*DNF*"
               : `*${entry.timeTaken}s* (${entry.wpm} WPM)`
