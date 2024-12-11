@@ -72,94 +72,91 @@ export const GameStart = async (
   );
 
   const timerStart = Date.now();
-
-  const finishGame = async () => {
-    await Promise.all(
-      players.map((player) =>
-        bot.sendMessage(
-          player.telegramId,
-          "⏳ Calculating leaderboard\.\.\. Please wait\.",
-          {
-            reply_markup: {
-              inline_keyboard: [
-                [{ text: "🔄 Replay", callback_data: "replay" }],
-              ],
-            },
-          }
-        )
-      )
-    );
-
-    const leaderboard = Object.entries(playerStatuses)
-      .map(([telegramId, status]) => {
-        const username =
-          players.find((p) => p.telegramId === telegramId)?.username ||
-          "Unknown";
-        const typedText = status.typedText || "No input";
-        const timeTaken = status.timeTaken || Infinity;
-
-        const missedChars = calculateMissedChars(typedText, paragraph);
-        const newChars = calculateNewChars(typedText, paragraph);
-        const accuracy = calculateAccuracy(typedText, paragraph);
-        const wpm =
-          timeTaken === Infinity
-            ? 0
-            : calculateWPM(
-                typedText,
-                paragraph,
-                timeTaken,
-                difficulty,
-                parseInt(accuracy)
-              );
-
-        return {
-          telegramId,
-          username,
-          timeTaken,
-          typedText,
-          missedChars,
-          newChars,
-          accuracy,
-          wpm,
-        };
-      })
-      .sort((a, b) => a.timeTaken - b.timeTaken);
-
-    const leaderboardMessage = `📊 *Leaderboard*\n\n${leaderboard
-      .map(
-        (entry, index) =>
-          `${index + 1}\. ${entry.username} \- ${
-            entry.timeTaken === Infinity
-              ? "*DNF*"
-              : `*${entry.timeTaken}s* (${entry.wpm} WPM)`
-          }\nTyped: "${entry.typedText}"\n` +
-          `Accuracy: ${entry.accuracy}%\nMissed: ${entry.missedChars}\nNew: ${entry.newChars}`
-      )
-      .join("\n\n")}`;
-
-    await Promise.all(
-      players.map((player) =>
-        bot.sendMessage(player.telegramId, leaderboardMessage, {
-          parse_mode: "MarkdownV2",
+const finishGame = async () => {
+  await Promise.all(
+    players.map((player) =>
+      bot.sendMessage(
+        player.telegramId,
+        "⏳ Calculating leaderboard\\.\\.\\. Please wait\\.",
+        {
           reply_markup: {
-            inline_keyboard: [
-              [
-                { text: "🔄 Replay", callback_data: "replay" },
-                { text: "🏠 Home", callback_data: "restart_game" },
-              ],
-            ],
+            inline_keyboard: [[{ text: "🔄 Replay", callback_data: "replay" }]],
           },
-        })
+        }
       )
-    );
+    )
+  );
 
-    bot.once("callback_query", async (callbackQuery) => {
-      if (callbackQuery.data === "replay") {
-        await bot.answerCallbackQuery(callbackQuery.id);
-        GameStart(bot, players, settings);
-      }
-    });
-  };
+  const leaderboard = Object.entries(playerStatuses)
+    .map(([telegramId, status]) => {
+      const username =
+        players.find((p) => p.telegramId === telegramId)?.username || "Unknown";
+      const typedText = status.typedText || "No input";
+      const timeTaken = status.timeTaken || Infinity;
+
+      const missedChars = calculateMissedChars(typedText, paragraph);
+      const newChars = calculateNewChars(typedText, paragraph);
+      const accuracy = calculateAccuracy(typedText, paragraph);
+      const wpm =
+        timeTaken === Infinity
+          ? 0
+          : calculateWPM(
+              typedText,
+              paragraph,
+              timeTaken,
+              difficulty,
+              parseInt(accuracy)
+            );
+
+      return {
+        telegramId,
+        username,
+        timeTaken,
+        typedText,
+        missedChars,
+        newChars,
+        accuracy,
+        wpm,
+      };
+    })
+    .sort((a, b) => a.timeTaken - b.timeTaken);
+
+  const leaderboardMessage = `📊 *Leaderboard*\n\n${leaderboard
+    .map(
+      (entry, index) =>
+        `${index + 1}\\. ${entry.username} \- ${
+          entry.timeTaken === Infinity
+            ? "*DNF*"
+            : `*${entry.timeTaken}s* \\(${entry.wpm} WPM\\)`
+        }\nTyped: "${entry.typedText}"\n` +
+        `Accuracy: ${entry.accuracy}%\nMissed: ${entry.missedChars}\nNew: ${entry.newChars}`
+    )
+    .join("\n\n")}`;
+
+  await Promise.all(
+    players.map((player) =>
+      bot.sendMessage(player.telegramId, leaderboardMessage, {
+        parse_mode: "MarkdownV2",
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: "🔄 Replay", callback_data: "replay" },
+              { text: "🏠 Home", callback_data: "restart_game" },
+            ],
+          ],
+        },
+      })
+    )
+  );
+
+  bot.once("callback_query", async (callbackQuery) => {
+    if (callbackQuery.data === "replay") {
+      await bot.answerCallbackQuery(callbackQuery.id);
+      GameStart(bot, players, settings);
+    }
+  });
+};
+
 
   const interval = setInterval(async () => {
     const elapsed = Math.floor((Date.now() - timerStart) / 1000);
