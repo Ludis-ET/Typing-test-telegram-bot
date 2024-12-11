@@ -17,6 +17,74 @@ export const getDutation = (duration: string) => {
   }
 };
 
+export const calculateWPM = (
+  typedText: string,
+  promptText: string,
+  timeTaken: number,
+  difficulty: string,
+  accuracy: number
+): [number, number] => {
+  const normalizeText = (text: string) =>
+    text.replace(/\s+/g, " ").trim().split(" ");
+
+  const typedWords = normalizeText(typedText);
+  const promptWords = normalizeText(promptText);
+
+  let correctChars = 0;
+  let totalChars = 0;
+
+  promptWords.forEach((word, index) => {
+    const typedWord = typedWords[index] || "";
+    const minLength = Math.min(word.length, typedWord.length);
+
+    for (let i = 0; i < minLength; i++) {
+      if (word[i] === typedWord[i]) {
+        correctChars++;
+      }
+    }
+    totalChars += word.length;
+  });
+
+  const rawWPM =
+    typedText.replace(/\s+/g, " ").trim().split(" ").length / (timeTaken / 60);
+  const acc = accuracy / 100;
+
+  const realWPM = Math.round(rawWPM * acc);
+
+  return [Math.round(rawWPM), Math.max(realWPM, 0)];
+};
+
+
+export const calculateMissedChars = (generated: string, prompt: string) => {
+  let missed = 0;
+  const length = Math.min(generated.length, prompt.length);
+  for (let i = 0; i < length; i++) {
+    if (generated[i] !== prompt[i]) missed++;
+  }
+  missed += Math.max(0, prompt.length - generated.length);
+  return missed;
+};
+
+
+export const calculateNewChars = (generated: string, prompt: string) => {
+  let newC = 0;
+  const length = Math.min(generated.length, prompt.length);
+  for (let i = 0; i < length; i++) {
+    if (generated[i] !== prompt[i]) newC++;
+  }
+  return newC;
+};
+
+
+export const calculateAccuracy = (generated: string, prompt: string) => {
+  let correct = 0;
+  for (let i = 0; i < Math.min(generated.length, prompt.length); i++) {
+    if (generated[i] === prompt[i]) correct++;
+  }
+  return prompt.length > 0 ? ((correct / prompt.length) * 100).toFixed(2) : "0";
+};
+
+
 export const generateWPM = async (
   bot: TelegramBot,
   chatId: number,
@@ -26,73 +94,6 @@ export const generateWPM = async (
   promptText: string,
   timeTaken: number
 ) => {
-  const calculateWPM = (
-    typedText: string,
-    promptText: string,
-    timeTaken: number,
-    difficulty: string,
-    accuracy: number
-  ): [number, number] => {
-    const normalizeText = (text: string) =>
-      text.replace(/\s+/g, " ").trim().split(" ");
-
-    const typedWords = normalizeText(typedText);
-    const promptWords = normalizeText(promptText);
-
-    let correctChars = 0;
-    let totalChars = 0;
-
-    promptWords.forEach((word, index) => {
-      const typedWord = typedWords[index] || "";
-      const minLength = Math.min(word.length, typedWord.length);
-
-      for (let i = 0; i < minLength; i++) {
-        if (word[i] === typedWord[i]) {
-          correctChars++;
-        }
-      }
-      totalChars += word.length;
-    });
-
-    const rawWPM =
-      typedText.replace(/\s+/g, " ").trim().split(" ").length /
-      (timeTaken / 60);
-    const acc = accuracy / 100;
-
-    const realWPM = Math.round(rawWPM * acc);
-
-    return [Math.round(rawWPM), Math.max(realWPM, 0)];
-  };
-
-  const calculateMissedChars = (generated: string, prompt: string) => {
-    let missed = 0;
-    const length = Math.min(generated.length, prompt.length);
-    for (let i = 0; i < length; i++) {
-      if (generated[i] !== prompt[i]) missed++;
-    }
-    missed += Math.max(0, prompt.length - generated.length);
-    return missed;
-  };
-
-  const calculateNewChars = (generated: string, prompt: string) => {
-    let newC = 0;
-    const length = Math.min(generated.length, prompt.length);
-    for (let i = 0; i < length; i++) {
-      if (generated[i] !== prompt[i]) newC++;
-    }
-    return newC;
-  };
-
-  const calculateAccuracy = (generated: string, prompt: string) => {
-    let correct = 0;
-    for (let i = 0; i < Math.min(generated.length, prompt.length); i++) {
-      if (generated[i] === prompt[i]) correct++;
-    }
-    return prompt.length > 0
-      ? ((correct / prompt.length) * 100).toFixed(2)
-      : "0";
-  };
-
   const duration = options.duration ? parseInt(options.duration) : 0;
 
   const missedChars = calculateMissedChars(generatedText, promptText);
@@ -110,7 +111,7 @@ export const generateWPM = async (
   );
 
   try {
-    const status = accuracy > 80 ? "Success" : "Fail"; 
+    const status = accuracy > 80 ? "Success" : "Fail";
     await SinglePlay.create({
       chatId,
       difficulty,

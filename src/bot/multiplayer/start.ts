@@ -78,7 +78,7 @@ export const GameStart = async (
       }))
       .sort((a, b) => a.timeTaken - b.timeTaken);
 
-    console.log("Game Over\\! Leaderboard:");
+    console.log("Game Over\\! Leaderboard\\:");
     console.table(leaderboard);
 
     await Promise.all(
@@ -88,7 +88,7 @@ export const GameStart = async (
           `📊 *Leaderboard*\n\n${leaderboard
             .map(
               (entry, index) =>
-                `${index + 1}. ${entry.username || "Unknown"} - ${
+                `${index + 1}\\. ${entry.username || "Unknown"} \\- ${
                   entry.timeTaken === Infinity ? "DNF" : `${entry.timeTaken}s`
                 }\nTyped: "${entry.typedText}"`
             )
