@@ -56,6 +56,16 @@ export const GameStart = async (
         chat_id: players[index].telegramId,
         message_id: msg.message_id,
         parse_mode: "MarkdownV2",
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "🔄 Restart",
+                callback_data: "restart_friend_game",
+              },
+            ],
+          ],
+        },
       })
     )
   );
@@ -67,11 +77,6 @@ export const GameStart = async (
         disable_web_page_preview: true,
         disable_notification: true,
         protect_content: true,
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: "🔄 Restart", callback_data: "restart_friend_multi_game" }],
-          ],
-        },
       })
     )
   );
@@ -129,7 +134,7 @@ export const GameStart = async (
           `Raw WPM: ${(entry.wpm as [number, number])[0]}`
       )
       .join("\n\n")}`;
-      
+
     await Promise.all(
       players.map((player) =>
         bot.sendMessage(player.telegramId, leaderboardMessage, {
@@ -149,40 +154,13 @@ export const GameStart = async (
     bot.once("callback_query", async (callbackQuery) => {
       const { data } = callbackQuery;
       if (data === "replay") {
-        await bot.answerCallbackQuery(callbackQuery.id);
+      await bot.answerCallbackQuery(callbackQuery.id);
+        GameStart(bot, players, settings);
+      } else if (data === "restart_friend_game") {
+        console.log("restart_friend_game");
+      await bot.answerCallbackQuery(callbackQuery.id);
         GameStart(bot, players, settings);
       }
-      //  else if (data === "sort_accuracy" || data === "sort_wpm") {
-      //   const sortedLeaderboard = leaderboard.sort((a, b) =>
-      //     data === "sort_accuracy"
-      //       ? parseFloat(b.accuracy) - parseFloat(a.accuracy)
-      //       : (b.wpm as [number, number])[1] - (a.wpm as [number, number])[1]
-      //   );
-
-      //   const sortedMessage = `\uD83D\uDCCA *Leaderboard*\n\n${leaderboard
-      //     .map(
-      //       (entry, index) =>
-      //         `${index + 1} ${entry.username} \\- ${
-      //           entry.timeTaken === Infinity
-      //             ? "*DNF*"
-      //             : `*${entry.timeTaken}s* \\(${
-      //                 (entry.wpm as [number, number])[1]
-      //               } WPM\\)`
-      //         }\n` +
-      //         `Accuracy: ${parseInt(entry.accuracy)}\\%\n` +
-      //         `Missed Characters: ${entry.missedChars}\n` +
-      //         `New Characters: ${entry.newChars}\n` +
-      //         `Raw WPM: ${(entry.wpm as [number, number])[0]}`
-      //     )
-      //     .join("\n\n")}`;
-
-      //   await bot.editMessageText(sortedMessage, {
-      //     chat_id: callbackQuery.message?.chat.id,
-      //     message_id: callbackQuery.message?.message_id,
-      //     parse_mode: "MarkdownV2",
-      //     reply_markup: callbackQuery.message?.reply_markup,
-      //   });
-      // }
     });
   };
 
