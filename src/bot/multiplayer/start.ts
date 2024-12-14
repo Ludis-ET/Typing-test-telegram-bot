@@ -67,6 +67,11 @@ export const GameStart = async (
         disable_web_page_preview: true,
         disable_notification: true,
         protect_content: true,
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: "🔄 Restart", callback_data: "restart_friend_multi_game" }],
+          ],
+        },
       })
     )
   );
