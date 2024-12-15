@@ -56,16 +56,6 @@ export const GameStart = async (
         chat_id: players[index].telegramId,
         message_id: msg.message_id,
         parse_mode: "MarkdownV2",
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: "🔄 Restart",
-                callback_data: "restart_friend_game",
-              },
-            ],
-          ],
-        },
       })
     )
   );
@@ -154,11 +144,11 @@ export const GameStart = async (
     bot.once("callback_query", async (callbackQuery) => {
       const { data } = callbackQuery;
       if (data === "replay") {
-      await bot.answerCallbackQuery(callbackQuery.id);
+        await bot.answerCallbackQuery(callbackQuery.id);
         GameStart(bot, players, settings);
       } else if (data === "restart_friend_game") {
         console.log("restart_friend_game");
-      await bot.answerCallbackQuery(callbackQuery.id);
+        await bot.answerCallbackQuery(callbackQuery.id);
         GameStart(bot, players, settings);
       }
     });
