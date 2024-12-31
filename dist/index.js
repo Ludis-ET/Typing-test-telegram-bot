@@ -7,7 +7,10 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const app_1 = __importDefault(require("./app"));
 require("./bot/bot");
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
+app_1.default.use("/", (req, res) => {
+    res.send("Welcome to the Typing test");
+});
 app_1.default
     .listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
