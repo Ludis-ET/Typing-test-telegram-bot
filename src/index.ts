@@ -5,7 +5,7 @@ dotenv.config();
 import app from "./app";
 import "./bot/bot";
 
-const PORT = process.env.PORT || 5000;
+const PORT =  5000;
 
 app
   .listen(PORT, () => {
@@ -14,3 +14,5 @@ app
   .on("error", (err) => {
     console.error("Error starting server:", err);
   });
+
+  
